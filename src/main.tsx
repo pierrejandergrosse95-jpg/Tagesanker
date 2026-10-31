@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import App from './App';
 import { UiProvider } from './ui/components';
+import '@fontsource/great-vibes/400.css';
+import '@fontsource/cormorant-garamond/500.css';
+import '@fontsource/cormorant-garamond/600.css';
 import './ui/theme.css';
 import { db } from './core/db';
 

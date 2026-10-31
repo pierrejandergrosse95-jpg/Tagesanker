@@ -64,6 +64,14 @@ Splash-Screens und Web-Icons werden daraus erzeugt:
 python3 scripts/generate-icons.py   # benötigt Pillow
 ```
 
+### Tarot-Karten
+
+Die Kartenbilder werden aus `assets/tarot-original.png` zugeschnitten (nur das Motiv; Nummer und Name setzt die App):
+
+```bash
+python3 scripts/generate-tarot.py
+```
+
 ## Projektstruktur
 
 ```

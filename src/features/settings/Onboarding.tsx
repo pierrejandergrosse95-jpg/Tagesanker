@@ -1,4 +1,5 @@
-import { Bell, Leaf, Moon, Sparkles } from 'lucide-react';
+import { Anchor, Bell } from 'lucide-react';
+import { Scene } from '../../ui/scenes';
 import { useState } from 'react';
 import { germanTzOffset, profileSign } from '../../core/astro/zodiac';
 import { db } from '../../core/db';
@@ -23,16 +24,16 @@ export default function Onboarding() {
   return (
     <div className="screen" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingBottom: 40 }}>
       {step === 0 && (
-        <div className="stack center" style={{ alignItems: 'center' }}>
-          <img src="./icon-512.png" alt="" width={180} height={180} style={{ borderRadius: 32, boxShadow: 'var(--shadow)' }} />
-          <h1 className="sr-only">Tagesanker</h1>
-          <p className="serif muted" style={{ fontSize: 18 }}>Dein Alltag. Dein Rhythmus.<br />Deine innere Balance.</p>
-          <div className="card stack" style={{ textAlign: 'left', marginTop: 12 }}>
-            <div className="row"><Leaf size={20} className="gold-text" /><span className="small">Schichten, Termine, Aufgaben, Finanzen und Medikamente an einem Ort.</span></div>
-            <div className="row"><Moon size={20} className="gold-text" /><span className="small">Mondkalender, Meditation, Tagesimpulse und Tagebuch für deine innere Reise.</span></div>
-            <div className="row"><Sparkles size={20} className="gold-text" /><span className="small">Privat: Alle Daten bleiben offline auf deinem Gerät.</span></div>
+        <div className="splash">
+          <Scene variant="sunset" animal="fox" foliage seed={5} extraSky={480} />
+          <div className="splash-content">
+            <Anchor size={44} color="#fff1c8" strokeWidth={1.6} />
+            <div className="splash-title" style={{ marginTop: 8 }}>Tagesanker</div>
+            <p className="serif" style={{ fontSize: 20, marginTop: 10, textShadow: '0 1px 8px rgb(0 0 0 / .4)' }}>Dein Alltag. Dein Rhythmus.<br />Deine innere Balance.</p>
+            <div className="grow" />
+            <button className="btn light" style={{ minWidth: 200 }} onClick={() => setStep(1)}>Los geht’s →</button>
+            <p className="tiny" style={{ marginTop: 14, opacity: 0.85 }}>Privat & offline – deine Daten bleiben auf deinem Gerät.</p>
           </div>
-          <button className="btn block mt" onClick={() => setStep(1)}>Los geht’s</button>
         </div>
       )}
       {step === 1 && (
@@ -64,9 +65,9 @@ export default function Onboarding() {
           <button className="btn ghost block" onClick={finish}>Später</button>
         </div>
       )}
-      <div className="row mt" style={{ justifyContent: 'center', gap: 6 }}>
+      {step > 0 && <div className="row mt" style={{ justifyContent: 'center', gap: 6 }}>
         {[0, 1, 2, 3].map((i) => <span key={i} className="swatch" style={{ background: i === step ? 'var(--forest)' : 'var(--line)' }} />)}
-      </div>
+      </div>}
     </div>
   );
 }

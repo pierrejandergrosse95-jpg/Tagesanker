@@ -1,6 +1,6 @@
 import { ArrowDown, ArrowUp, Bell, Database, Download, Eye, EyeOff, Lock, Palette, Shield, Sparkles, Trash2, Upload, User, Briefcase, LayoutGrid } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { backupFileName, exportBackupText, isEncrypted, restoreBackupText, wipeAll } from '../../core/backup';
 import { hashPin, verifyPin } from '../../core/crypto';
 import { updateSettings, useSettings } from '../../core/hooks';
@@ -11,12 +11,12 @@ import { Field, Hint, Segmented, Sheet, Toggle, TopBar, useUi } from '../../ui/c
 
 const WIDGET_LABELS: Record<DashboardWidget, string> = {
   shift: 'Heutige Schicht', today: 'Überblick-Kacheln', meds: 'Medikamente heute', tasks: 'Offene Aufgaben', bills: 'Anstehende Zahlungen',
-  events: 'Nächste Termine', habits: 'Gewohnheiten', moon: 'Mondphase', impulse: 'Spiritueller Tagesimpuls', preview: 'Vorschau nächste Tage',
+  events: 'Nächste Termine', habits: 'Gewohnheiten', moon: 'Mondphase', impulse: 'Tagesimpuls (immer oben)', preview: 'Vorschau nächste Tage',
 };
 
-function Group({ icon, title, children }: { icon: ReactNode; title: string; children: ReactNode }) {
+function Group({ icon, title, children, id }: { icon: ReactNode; title: string; children: ReactNode; id?: string }) {
   return (
-    <section>
+    <section id={id} style={{ scrollMarginTop: 16 }}>
       <div className="section-title"><h2 className="row" style={{ gap: 8 }}>{icon}{title}</h2></div>
       <div className="card stack">{children}</div>
     </section>
@@ -142,7 +142,11 @@ export default function SettingsScreen() {
   const [pinOpen, setPinOpen] = useState(false);
   const [backup, setBackup] = useState<'export' | 'import' | null>(null);
   const [pending, setPending] = useState<number | null>(null);
+  const loc = useLocation();
   useEffect(() => { void permissionState().then(setPerm); }, []);
+  useEffect(() => {
+    if (loc.hash) setTimeout(() => document.getElementById(loc.hash.slice(1))?.scrollIntoView({ behavior: 'smooth' }), 150);
+  }, [loc.hash]);
   useEffect(() => { void collectReminders(s).then((r) => setPending(r.length)); }, [s]);
   const set = (p: Partial<Settings>) => void updateSettings(p);
   const lastBackup = (() => { try { return localStorage.getItem('kt-last-backup'); } catch { return null; } })();
@@ -164,7 +168,7 @@ export default function SettingsScreen() {
           <button className="btn secondary" onClick={() => nav('/spirit/profile')}>Geburtsprofil & Sternzeichen</button>
         </Group>
 
-        <Group icon={<Palette size={18} />} title="Darstellung">
+        <Group id="design" icon={<Palette size={18} />} title="Darstellung">
           <Segmented value={s.theme} onChange={(theme: ThemeMode) => set({ theme })} options={[{ value: 'system', label: 'System' }, { value: 'light', label: 'Hell' }, { value: 'dark', label: 'Nachtmodus' }]} />
         </Group>
 
@@ -186,7 +190,7 @@ export default function SettingsScreen() {
           </div>
         </Group>
 
-        <Group icon={<Bell size={18} />} title="Benachrichtigungen">
+        <Group id="notify" icon={<Bell size={18} />} title="Benachrichtigungen">
           {perm !== 'granted' && (
             <div className="card flat tint">
               <p className="small">{perm === 'denied' ? 'Benachrichtigungen sind in den Systemeinstellungen blockiert.' : 'Erlaube Benachrichtigungen, damit Tagesanker dich erinnern kann.'}</p>
@@ -211,7 +215,7 @@ export default function SettingsScreen() {
           <Hint>Alle Daten bleiben ausschließlich lokal auf diesem Gerät. Es gibt kein Konto, keine Cloud und keine Analyse-Tracker.</Hint>
         </Group>
 
-        <Group icon={<Database size={18} />} title="Datensicherung">
+        <Group id="backup" icon={<Database size={18} />} title="Datensicherung">
           <div className="tiny muted">Letztes Backup: {lastBackup ? new Date(lastBackup).toLocaleString('de-DE') : 'noch keins'}</div>
           <div className="grid2">
             <button className="btn secondary" onClick={() => setBackup('export')}><Download size={18} /> Exportieren</button>
@@ -232,7 +236,7 @@ export default function SettingsScreen() {
           <Row label="KI-Tagesübersicht & Reflexionsimpulse" sub="Geplant für eine spätere Version. Tagesanker funktioniert vollständig ohne KI."><Toggle checked={false} onChange={() => toast('Diese Funktion folgt in einer späteren Version.')} label="KI" /></Row>
         </Group>
 
-        <Group icon={<Shield size={18} />} title="Über Tagesanker">
+        <Group id="about" icon={<Shield size={18} />} title="Über Tagesanker">
           <div className="small">Tagesanker <span className="muted">· Version 0.1.0</span></div>
           <div className="small muted">Dein Alltag. Dein Rhythmus. Deine innere Balance.</div>
           <Hint>Gesundheits- und Finanzfunktionen dienen der Organisation und Dokumentation – keine medizinische oder finanzielle Beratung. Astrologie, Tarot und Impulse sind spirituelle Anregungen, keine gesicherten Tatsachen.</Hint>

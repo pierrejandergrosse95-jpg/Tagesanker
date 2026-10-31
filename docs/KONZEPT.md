@@ -166,10 +166,18 @@ Datumswerte als ISO-Tag `YYYY-MM-DD`, Uhrzeiten als `HH:MM` (lokale Zeit).
   `prefers-reduced-motion` wird respektiert.
 - **Nachtmodus:** System / Hell / Dunkel, umschaltbar in den Einstellungen.
 
-**Navigation** (Bottom-Bar, wie gefordert): Dashboard · Kalender · Finanzen · Gesundheit ·
-Spiritualität. Aufgaben, Schichtplan, Notizen, Gewohnheiten, Suche und Einstellungen
-über die Dashboard-Kacheln und das Menü „Bereiche“ (Raster-Symbol oben). Ein
-„+“-Schnellzugriff legt Aufgabe, Termin, Schicht, Ausgabe oder Notiz an.
+**Navigation** (Bottom-Bar wie im Gestaltungsentwurf): Home · Kalender · **＋** · Entdecken · Profil.
+„Entdecken“ führt als Bildkarten-Raster zu allen Bereichen (Aufgaben, Schichtplan, Gesundheit,
+Finanzen, Gewohnheiten, Notizen, Tagesimpuls, Meditation, Mond, Astrologie, Tarot, Tagebuch, Suche).
+Das zentrale „＋“ legt Aufgabe, Termin, Schicht, Ausgabe oder Notiz an. „Profil“ bündelt Name,
+Motto, Begleiter-Avatar, Einstellungen, Erinnerungen und Datensicherung.
+
+**Märchen-Stil:** Eigene, vektorbasierte Illustrationen (`src/ui/scenes.tsx`) – Schloss, See,
+Laternen, Sternenhimmel, Blattranken und Tier-Silhouetten (Fuchs, Hirsch, Eule, Huhn, Katze) in
+sechs Lichtstimmungen. Die Startseite wechselt die Stimmung mit der Tageszeit. Schreibschrift
+(Great Vibes) für den Schriftzug, Cormorant Garamond für Überschriften – beide offline gebündelt.
+Das Tarot nutzt ein eigenes illustriertes Kartenset (`assets/tarot-original.png`, Zuschnitt per
+`scripts/generate-tarot.py`).
 
 ---
 

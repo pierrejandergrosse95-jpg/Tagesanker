@@ -7,6 +7,7 @@ import { useToday } from '../../core/hooks';
 import { describeRecurrence, nextOccurrence, NO_REPEAT } from '../../core/recurrence';
 import { withoutId } from '../../core/util';
 import type { Priority, Task, TaskScope } from '../../core/types';
+import { SceneCard } from '../../ui/scenes';
 import { Empty, Field, RecurrencePicker, Segmented, Sheet, Toggle, TopBar, useUi } from '../../ui/components';
 
 export const TASK_CATEGORIES = ['Haushalt', 'Arbeit', 'Einkauf', 'Finanzen', 'Gesundheit', 'Persönlich', 'Hof & Garten', 'Sonstiges'];
@@ -149,6 +150,9 @@ export default function TasksScreen() {
       ) : (
         <div className="card"><Empty icon={<ListChecks size={30} />} text={view === 'done' ? 'Noch nichts erledigt.' : 'Keine offenen Aufgaben – schön!'} /></div>
       )}
+      <SceneCard scene={{ variant: 'meadow', animal: 'hen', castle: false, animalX: 300, seed: 3 }} height={150} style={{ marginTop: 16 }}>
+        <span className="serif" style={{ fontSize: 18, fontStyle: 'italic', textShadow: '0 1px 6px rgb(0 0 0 / .5)' }}>„Manchmal sind es die kleinen Dinge, die den Tag groß machen.“</span>
+      </SceneCard>
       <TaskEditor task={editing} onClose={() => setEditing(null)} />
     </div>
   );

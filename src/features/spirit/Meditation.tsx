@@ -7,10 +7,17 @@ import { addDays, today } from '../../core/dates';
 import { db } from '../../core/db';
 import { pickFile } from '../../core/platform';
 import { Empty, Hint, TopBar, useUi } from '../../ui/components';
+import { Scene, type SceneProps } from '../../ui/scenes';
 import { setHabitValue } from '../habits/Habits';
 import { SpiritNav } from './SpiritHome';
 
 const DURATIONS = [5, 10, 15, 20, 30];
+
+const MED_SCENES: Record<string, SceneProps> = {
+  morning: { variant: 'dawn', animal: 'deer' }, evening: { variant: 'sunset', animal: 'fox' }, sleep: { variant: 'night', animal: 'owl' },
+  stress: { variant: 'forest', animal: 'deer' }, selflove: { variant: 'lanterns', animal: 'cat' }, calm: { variant: 'night', animal: 'fox' },
+  focus: { variant: 'meadow', animal: 'hen' },
+};
 
 let audioCtx: AudioContext | null = null;
 /** Sanfter Klangschalen-Ton per WebAudio (keine Audiodatei nötig). */
@@ -147,7 +154,9 @@ function Session({ id, minutes }: { id: string; minutes: number }) {
   const scale = breathPhase === 0 || breathPhase === 1 ? 1.35 : 0.85;
 
   return (
-    <div className="meditate-screen">
+    <div className="meditate-screen" style={{ position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '45%', opacity: 0.55, pointerEvents: 'none' }}><Scene variant={breath ? 'dawn' : 'night'} animal="none" seed={23} /></div>
+      <div style={{ position: 'relative' }}>
       <div className="row between">
         <button className="icon-btn" style={{ color: '#efe8d8' }} aria-label="Zurück" onClick={stop}><ChevronLeft size={24} /></button>
         {med && (
@@ -176,6 +185,7 @@ function Session({ id, minutes }: { id: string; minutes: number }) {
       </div>
       {elapsed > 0 && <div className="center mt"><button className="btn ghost" style={{ color: '#c7bfae' }} onClick={stop}><Square size={16} /> Beenden</button></div>}
       {audioUrl && <audio ref={audioRef} src={audioUrl} loop />}
+    </div>
     </div>
   );
 }
@@ -208,17 +218,26 @@ export default function MeditationScreen() {
           <div className="small muted mt">Letzte 30 Tage: {history.length} Sitzungen · {totalMin} Minuten</div>
         </div>
 
-        <button className="card cosmic tap row" onClick={() => go('timer')}>
-          <Flower2 size={26} color="#c9a55c" />
-          <div className="grow"><div className="bold">Stille Meditation</div><div className="small muted">Nur Timer mit Klangschale – ohne Anleitung</div></div>
-          <Play size={20} color="#f1e4c4" />
-        </button>
+        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+          <button onClick={() => go('calm')} style={{ position: 'relative', display: 'block', width: '100%', height: 190, border: 0, padding: 0 }} aria-label="Innere Ruhe starten">
+            <Scene variant="night" animal="fox" seed={23} />
+            <span className="play-btn" style={{ position: 'absolute', right: 16, bottom: 16, width: 54, height: 54 }}><Play size={24} style={{ marginLeft: 3 }} /></span>
+          </button>
+          <div style={{ padding: '12px 16px 16px' }}>
+            <h3>Innere Ruhe</h3>
+            <div className="small muted">{minutes} Minuten · Geführte Meditation, um loszulassen und neue Kraft zu spüren.</div>
+            <div className="grid2 mt">
+              <button className="btn" onClick={() => go('calm')}>Starten</button>
+              <button className="btn secondary" onClick={() => go('timer')}><Flower2 size={16} /> Nur Timer</button>
+            </div>
+          </div>
+        </div>
 
         <div className="section-title"><h2>Geführte Meditationen</h2></div>
         <div className="list">
           {MEDITATIONS.map((m) => (
             <button key={m.id} className="list-item" onClick={() => go(m.id)}>
-              <span className="tile" style={{ minHeight: 0 }}><span className="icon-wrap"><Flower2 size={18} /></span></span>
+              <span style={{ width: 48, height: 48, borderRadius: 12, overflow: 'hidden', flex: 'none' }}><Scene {...MED_SCENES[m.id]} castle={false} animalX={200} animalScale={2.4} /></span>
               <div className="grow"><div className="title">{m.title}</div><div className="meta">{m.subtitle} · {m.category}</div></div>
               <Play size={18} className="faint" />
             </button>

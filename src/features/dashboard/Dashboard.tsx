@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { CalendarDays, CheckSquare, ChevronRight, Euro, Heart, LayoutGrid, Pill, Search, Settings } from 'lucide-react';
+import { CalendarDays, CheckSquare, ChevronRight, CircleCheck, Coins, Euro, Flower2, Heart, Layers, Pill, Search, Settings, Sun } from 'lucide-react';
+import { Scene, type SceneVariant } from '../../ui/scenes';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addDays, fmtDayMonth, fmtLong, fromISO, greeting, isoWeek, nowHM, relDay, WEEKDAYS_SHORT } from '../../core/dates';
@@ -232,28 +233,89 @@ const WIDGETS: Record<DashboardWidget, (p: { day: string }) => ReactNode> = {
   habits: HabitsWidget, moon: MoonWidget, impulse: ImpulseWidget, preview: PreviewWidget,
 };
 
+function TodayCard({ day }: { day: string }) {
+  const nav = useNavigate();
+  const data = useLiveQuery(async () => {
+    const tasks = await db.tasks.filter((t) => (t.due ? t.due === day : false) || (!t.done && (!t.due || t.due < day))).toArray();
+    return { total: tasks.length, done: tasks.filter((t) => t.done).length };
+  }, [day]);
+  const total = data?.total ?? 0;
+  const done = data?.done ?? 0;
+  return (
+    <button className="card tap row" onClick={() => nav('/tasks')}>
+      <span style={{ width: 52, height: 52, borderRadius: '50%', background: 'radial-gradient(circle, #ffe7a8, #e9a66b)', display: 'grid', placeItems: 'center', flex: 'none', boxShadow: '0 0 0 6px var(--gold-soft)' }}><Sun size={26} color="#8a5a1f" /></span>
+      <div className="grow">
+        <div className="serif bold" style={{ fontSize: 19 }}>Heute</div>
+        <div className="small muted">{total ? `${total - done} von ${total} Aufgaben offen` : 'Keine Aufgaben – genieße den Tag'}</div>
+        <div style={{ marginTop: 6 }}><ProgressBar value={total ? done / total : 1} /></div>
+      </div>
+    </button>
+  );
+}
+
+const FEATURES = [
+  { to: '/calendar', label: 'Kalender', icon: CalendarDays },
+  { to: '/tasks', label: 'Aufgaben', icon: CircleCheck },
+  { to: '/health', label: 'Gesundheit', icon: Heart },
+  { to: '/finance', label: 'Finanzen', icon: Coins },
+  { to: '/spirit/meditation', label: 'Meditation', icon: Flower2 },
+  { to: '/spirit/tarot', label: 'Tarot', icon: Layers },
+];
+
+function sceneForNow(): SceneVariant {
+  const h = new Date().getHours();
+  if (h < 5 || h >= 21) return 'night';
+  if (h < 10) return 'dawn';
+  if (h < 17) return 'meadow';
+  return 'sunset';
+}
+
+function QuoteCard({ day }: { day: string }) {
+  const spirit = useDailySpirit(day);
+  const nav = useNavigate();
+  if (!spirit) return <div className="quote-card" style={{ minHeight: 70 }} />;
+  return (
+    <div className="quote-card" role="button" tabIndex={0} onClick={() => nav('/spirit')}>
+      <p>„{spirit.impulse.text}“</p>
+      <button className="icon-btn" style={{ width: 34, height: 34 }} aria-label="Merken" onClick={(e) => { e.stopPropagation(); void toggleLike(day); }}><Heart size={20} color="var(--rose)" fill={spirit.liked ? 'var(--rose)' : 'none'} /></button>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const day = useToday();
   const settings = useSettings();
   const nav = useNavigate();
   return (
     <div className="screen">
-      <header className="row" style={{ alignItems: 'flex-start', marginBottom: 14 }}>
-        <div className="grow">
-          <h1 style={{ fontSize: 27 }}>{greeting()}{settings.name ? `,` : ''}<br />{settings.name} <span className="gold-text">✦</span></h1>
-          <div className="small muted" style={{ marginTop: 4 }}>{fmtLong(day)} · KW {isoWeek(day)}</div>
+      <section className="hero">
+        <Scene variant={sceneForNow()} animal={settings.avatar} foliage castle seed={5} />
+        <div className="hero-content">
+          <div className="grow">
+            <h1>{greeting()}{settings.name ? <><br />{settings.name}</> : ''} <span style={{ color: '#ffe7a8' }}>✦</span></h1>
+            <div className="small" style={{ marginTop: 4, opacity: 0.9, textShadow: '0 1px 6px rgb(0 0 0 / .4)' }}>{fmtLong(day)} · KW {isoWeek(day)}</div>
+          </div>
+          <button className="icon-btn" aria-label="Suche" onClick={() => nav('/search')}><Search size={21} /></button>
+          <button className="icon-btn" aria-label="Einstellungen" onClick={() => nav('/settings')}><Settings size={21} /></button>
         </div>
-        <button className="icon-btn" aria-label="Suche" onClick={() => nav('/search')}><Search size={21} /></button>
-        <button className="icon-btn" aria-label="Bereiche" onClick={() => nav('/areas')}><LayoutGrid size={21} /></button>
-        <button className="icon-btn" aria-label="Einstellungen" onClick={() => nav('/settings')}><Settings size={21} /></button>
-      </header>
-      <div className="stack">
-        {settings.widgets.filter((w) => w.visible).map((w) => {
+      </section>
+      <QuoteCard day={day} />
+      <div className="stack mt">
+        <TodayCard day={day} />
+        <div className="grid2">
+          {FEATURES.map(({ to, label, icon: Icon }) => (
+            <button key={to} className="card tap feature-tile" onClick={() => nav(to)}>
+              <Icon size={22} strokeWidth={1.6} />
+              <span className="bold">{label}</span>
+            </button>
+          ))}
+        </div>
+        {settings.widgets.filter((w) => w.visible && w.id !== 'impulse').map((w) => {
           const W = WIDGETS[w.id];
           return <W key={w.id} day={day} />;
         })}
       </div>
-      <p className="tiny faint center" style={{ marginTop: 24 }}>Dashboard anpassen unter Einstellungen · {fmtDayMonth(day)}</p>
+      <p className="tiny faint center" style={{ marginTop: 24 }}>Dashboard anpassen unter Profil → Design & Dashboard · {fmtDayMonth(day)}</p>
     </div>
   );
 }

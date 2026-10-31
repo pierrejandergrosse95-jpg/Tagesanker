@@ -1,4 +1,4 @@
-import { Briefcase, CalendarDays, CheckSquare, Euro, Plus, StickyNote } from 'lucide-react';
+import { Briefcase, CalendarDays, CheckSquare, Euro, StickyNote } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { today } from '../../core/dates';
@@ -11,9 +11,8 @@ import { ShiftDaySheet } from '../shifts/Shifts';
 import { blankTask, TaskEditor } from '../tasks/Tasks';
 
 /** „+“-Schnellerfassung für die häufigsten Einträge. */
-export default function QuickAdd() {
+export default function QuickAdd({ open, setOpen }: { open: boolean; setOpen: (v: boolean) => void }) {
   const nav = useNavigate();
-  const [open, setOpen] = useState(false);
   const [task, setTask] = useState<Task | null>(null);
   const [event, setEvent] = useState<CalEvent | null>(null);
   const [entry, setEntry] = useState<FinanceEntry | null>(null);
@@ -33,7 +32,6 @@ export default function QuickAdd() {
 
   return (
     <>
-      <button className="fab" aria-label="Schnell hinzufügen" onClick={() => setOpen(true)}><Plus size={28} /></button>
       <Sheet open={open} onClose={() => setOpen(false)} title="Hinzufügen">
         <div className="grid3">
           {options.map(({ label, icon: Icon, run }) => (

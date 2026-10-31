@@ -7,6 +7,7 @@ import { fmtDayMonth, fmtLong, isoWeek, toISO } from '../../core/dates';
 import { db } from '../../core/db';
 import { useToday } from '../../core/hooks';
 import { Hint, MoonGlyph, TopBar } from '../../ui/components';
+import { Scene } from '../../ui/scenes';
 import { MAJOR_ARCANA } from '../../content/tarot';
 import { toggleLike, useDailySpirit } from './useSpirit';
 
@@ -37,6 +38,7 @@ export default function SpiritHome() {
       {spirit && (
         <div className="stack">
           <div className="card cosmic" style={{ padding: 20 }}>
+            <div style={{ height: 150, margin: '-20px -20px 14px' }}><Scene variant="lanterns" animal="none" seed={41} /></div>
             <div className="row between">
               <span className="badge gold">{spirit.impulse.topic}</span>
               <button className="icon-btn" style={{ color: '#f1e4c4' }} aria-label="Merken" onClick={() => void toggleLike(day)}><Heart size={20} fill={spirit.liked ? '#c9a55c' : 'none'} color="#c9a55c" /></button>

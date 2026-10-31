@@ -1,6 +1,6 @@
 import { App as CapApp } from '@capacitor/app';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { CalendarDays, HeartPulse, Home, Sparkles, Wallet } from 'lucide-react';
+import { CalendarDays, Heart, Home, Plus, UserRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { db, ensureSeed } from './core/db';
@@ -26,6 +26,8 @@ import TarotScreen from './features/spirit/Tarot';
 import JournalScreen from './features/spirit/Journal';
 import SearchScreen from './features/search/Search';
 import QuickAdd from './features/dashboard/QuickAdd';
+import Discover from './features/dashboard/Discover';
+import ProfileHome from './features/settings/ProfileHome';
 
 function useTheme() {
   const { theme } = useSettings();
@@ -42,24 +44,28 @@ function useTheme() {
   }, [theme]);
 }
 
-const NAV = [
-  { to: '/', label: 'Dashboard', icon: Home, end: true },
+const NAV_LEFT = [
+  { to: '/', label: 'Home', icon: Home, end: true },
   { to: '/calendar', label: 'Kalender', icon: CalendarDays },
-  { to: '/finance', label: 'Finanzen', icon: Wallet },
-  { to: '/health', label: 'Gesundheit', icon: HeartPulse },
-  { to: '/spirit', label: 'Spiritualität', icon: Sparkles },
+];
+const NAV_RIGHT = [
+  { to: '/discover', label: 'Entdecken', icon: Heart },
+  { to: '/profile', label: 'Profil', icon: UserRound },
 ];
 
-function BottomNav() {
+function BottomNav({ onPlus }: { onPlus: () => void }) {
+  const item = ({ to, label, icon: Icon, end }: (typeof NAV_LEFT)[number] & { end?: boolean }) => (
+    <NavLink key={to} to={to} end={end} className={({ isActive }) => (isActive ? 'active' : '')}>
+      <Icon size={22} strokeWidth={1.8} />
+      <span>{label}</span>
+    </NavLink>
+  );
   return (
     <nav className="bottom-nav" aria-label="Hauptnavigation">
       <div className="inner">
-        {NAV.map(({ to, label, icon: Icon, end }) => (
-          <NavLink key={to} to={to} end={end} className={({ isActive }) => (isActive ? 'active' : '')}>
-            <Icon size={22} strokeWidth={1.8} />
-            <span>{label}</span>
-          </NavLink>
-        ))}
+        {NAV_LEFT.map(item)}
+        <div className="plus"><button aria-label="Hinzufügen" onClick={onPlus}><Plus size={28} /></button></div>
+        {NAV_RIGHT.map(item)}
       </div>
     </nav>
   );
@@ -67,6 +73,7 @@ function BottomNav() {
 
 export default function App() {
   const [ready, setReady] = useState(false);
+  const [plusOpen, setPlusOpen] = useState(false);
   const settings = useLiveQuery(() => db.settings.get('main'), [ready]);
   const nav = useNavigate();
   const loc = useLocation();
@@ -121,13 +128,14 @@ export default function App() {
   if (!settings.onboarded) return <div className="app"><Onboarding /></div>;
 
   const immersive = /^\/spirit\/meditation\/.+/.test(loc.pathname);
-  const showFab = ['/', '/calendar', '/tasks', '/notes', '/finance', '/shifts'].includes(loc.pathname);
 
   return (
     <div className="app">
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/areas" element={<Areas />} />
+        <Route path="/discover" element={<Discover />} />
+        <Route path="/profile" element={<ProfileHome />} />
         <Route path="/calendar" element={<CalendarScreen />} />
         <Route path="/shifts" element={<ShiftsScreen />} />
         <Route path="/tasks" element={<TasksScreen />} />
@@ -147,8 +155,8 @@ export default function App() {
         <Route path="/settings" element={<SettingsScreen />} />
         <Route path="*" element={<Dashboard />} />
       </Routes>
-      {showFab && <QuickAdd />}
-      {!immersive && <BottomNav />}
+      <QuickAdd open={plusOpen} setOpen={setPlusOpen} />
+      {!immersive && <BottomNav onPlus={() => setPlusOpen(true)} />}
     </div>
   );
 }

@@ -72,6 +72,8 @@ export type TableName = (typeof TABLES)[number];
 export const DEFAULT_SETTINGS: Settings = {
   id: 'main',
   name: '',
+  motto: 'Ein bisschen mehr Magie im Alltag.',
+  avatar: 'fox',
   onboarded: false,
   theme: 'system',
   weeklyHours: 40,
