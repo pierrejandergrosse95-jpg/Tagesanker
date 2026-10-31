@@ -55,6 +55,15 @@ KlarTakt-debug-apk* und lässt sich direkt auf dem Smartphone installieren
 Für eine Veröffentlichung im Play Store wird ein Release-Build mit eigenem Signaturschlüssel benötigt
 (`./gradlew bundleRelease` in `android/`).
 
+### App-Icon
+
+Das Original liegt in `assets/icon-original.png`. Alle Android-Icons (klassisch, rund, adaptiv),
+Splash-Screens und Web-Icons werden daraus erzeugt:
+
+```bash
+python3 scripts/generate-icons.py   # benötigt Pillow
+```
+
 ## Projektstruktur
 
 ```

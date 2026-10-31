@@ -24,7 +24,7 @@ export default function Onboarding() {
     <div className="screen" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingBottom: 40 }}>
       {step === 0 && (
         <div className="stack center" style={{ alignItems: 'center' }}>
-          <img src="./icon.svg" alt="" width={96} height={96} style={{ borderRadius: 24 }} />
+          <img src="./icon-512.png" alt="" width={140} height={140} style={{ borderRadius: 32, boxShadow: 'var(--shadow)' }} />
           <h1 style={{ fontSize: 34 }}>KlarTakt</h1>
           <p className="serif muted" style={{ fontSize: 18 }}>Dein Alltag. Dein Rhythmus.<br />Deine innere Balance.</p>
           <div className="card stack" style={{ textAlign: 'left', marginTop: 12 }}>

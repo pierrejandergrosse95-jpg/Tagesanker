@@ -155,7 +155,7 @@ export async function rescheduleAll(): Promise<number> {
   const horizon = Date.now() + 24 * 3600000;
   for (const r of reminders) {
     if (r.at.getTime() > horizon) break;
-    webTimers.push(window.setTimeout(() => new Notification(r.title, { body: r.body, icon: './icon.svg', tag: r.key }), r.at.getTime() - Date.now()));
+    webTimers.push(window.setTimeout(() => new Notification(r.title, { body: r.body, icon: './icon-192.png', tag: r.key }), r.at.getTime() - Date.now()));
   }
   return reminders.length;
 }
