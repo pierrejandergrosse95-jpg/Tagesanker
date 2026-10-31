@@ -189,7 +189,7 @@ export default function SettingsScreen() {
         <Group icon={<Bell size={18} />} title="Benachrichtigungen">
           {perm !== 'granted' && (
             <div className="card flat tint">
-              <p className="small">{perm === 'denied' ? 'Benachrichtigungen sind in den Systemeinstellungen blockiert.' : 'Erlaube Benachrichtigungen, damit KlarTakt dich erinnern kann.'}</p>
+              <p className="small">{perm === 'denied' ? 'Benachrichtigungen sind in den Systemeinstellungen blockiert.' : 'Erlaube Benachrichtigungen, damit Tagesanker dich erinnern kann.'}</p>
               {perm !== 'denied' && <button className="btn sm mt" onClick={async () => { const ok = await requestPermission(); setPerm(ok ? 'granted' : 'denied'); if (ok) await rescheduleAll(); }}>Erlauben</button>}
             </div>
           )}
@@ -203,7 +203,7 @@ export default function SettingsScreen() {
             <Field label="Aufgaben ohne Uhrzeit um"><input className="input" type="time" value={s.notifyTimes.taskTime} onChange={(e) => set({ notifyTimes: { ...s.notifyTimes, taskTime: e.target.value } })} /></Field>
             <Field label="Schicht-Vorlauf (Min.)"><input className="input" type="number" min={0} max={600} value={s.notifyTimes.shiftLeadMin} onChange={(e) => set({ notifyTimes: { ...s.notifyTimes, shiftLeadMin: Number(e.target.value) || 0 } })} /></Field>
           </div>
-          <div className="tiny muted">{pending != null ? `${pending} Erinnerungen in den nächsten 14 Tagen geplant.` : ''} {isNative() ? '' : 'Im Browser erscheinen Erinnerungen nur, solange KlarTakt geöffnet ist – in der Android-App systemweit.'}</div>
+          <div className="tiny muted">{pending != null ? `${pending} Erinnerungen in den nächsten 14 Tagen geplant.` : ''} {isNative() ? '' : 'Im Browser erscheinen Erinnerungen nur, solange Tagesanker geöffnet ist – in der Android-App systemweit.'}</div>
         </Group>
 
         <Group icon={<Lock size={18} />} title="Datenschutz">
@@ -229,11 +229,11 @@ export default function SettingsScreen() {
         </Group>
 
         <Group icon={<Sparkles size={18} />} title="KI-Unterstützung">
-          <Row label="KI-Tagesübersicht & Reflexionsimpulse" sub="Geplant für eine spätere Version. KlarTakt funktioniert vollständig ohne KI."><Toggle checked={false} onChange={() => toast('Diese Funktion folgt in einer späteren Version.')} label="KI" /></Row>
+          <Row label="KI-Tagesübersicht & Reflexionsimpulse" sub="Geplant für eine spätere Version. Tagesanker funktioniert vollständig ohne KI."><Toggle checked={false} onChange={() => toast('Diese Funktion folgt in einer späteren Version.')} label="KI" /></Row>
         </Group>
 
-        <Group icon={<Shield size={18} />} title="Über KlarTakt">
-          <div className="small">KlarTakt <span className="muted">· Version 0.1.0</span></div>
+        <Group icon={<Shield size={18} />} title="Über Tagesanker">
+          <div className="small">Tagesanker <span className="muted">· Version 0.1.0</span></div>
           <div className="small muted">Dein Alltag. Dein Rhythmus. Deine innere Balance.</div>
           <Hint>Gesundheits- und Finanzfunktionen dienen der Organisation und Dokumentation – keine medizinische oder finanzielle Beratung. Astrologie, Tarot und Impulse sind spirituelle Anregungen, keine gesicherten Tatsachen.</Hint>
         </Group>

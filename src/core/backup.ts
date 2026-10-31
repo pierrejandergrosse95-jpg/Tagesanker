@@ -1,8 +1,8 @@
-import { db, ensureSeed, TABLES, type KlarTaktDB } from './db';
+import { db, ensureSeed, TABLES, type TagesankerDB } from './db';
 import { decryptText, encryptText, fromB64, toB64, type EncryptedPayload } from './crypto';
 
 export interface BackupFile {
-  format: 'klartakt-backup';
+  format: 'tagesanker-backup';
   version: 1;
   createdAt: string;
   tables: Record<string, unknown[]>;
@@ -36,16 +36,16 @@ function decodeBlobs(value: unknown): unknown {
   return value;
 }
 
-export async function createBackup(database: KlarTaktDB = db): Promise<BackupFile> {
+export async function createBackup(database: TagesankerDB = db): Promise<BackupFile> {
   const tables: Record<string, unknown[]> = {};
   for (const name of TABLES) {
     const rows = await database.table(name).toArray();
     tables[name] = (await encodeBlobs(rows)) as unknown[];
   }
-  return { format: 'klartakt-backup', version: 1, createdAt: new Date().toISOString(), tables };
+  return { format: 'tagesanker-backup', version: 1, createdAt: new Date().toISOString(), tables };
 }
 
-export async function exportBackupText(password?: string, database: KlarTaktDB = db): Promise<string> {
+export async function exportBackupText(password?: string, database: TagesankerDB = db): Promise<string> {
   const json = JSON.stringify(await createBackup(database));
   if (!password) return json;
   return JSON.stringify(await encryptText(json, password));
@@ -53,26 +53,26 @@ export async function exportBackupText(password?: string, database: KlarTaktDB =
 
 export function isEncrypted(text: string): boolean {
   try {
-    return (JSON.parse(text) as { format?: string }).format === 'klartakt-encrypted';
+    return (JSON.parse(text) as { format?: string }).format === 'tagesanker-encrypted';
   } catch {
     return false;
   }
 }
 
 /** Ersetzt alle Daten durch den Inhalt des Backups. */
-export async function restoreBackupText(text: string, password?: string, database: KlarTaktDB = db): Promise<void> {
+export async function restoreBackupText(text: string, password?: string, database: TagesankerDB = db): Promise<void> {
   let parsed: unknown;
   try {
     parsed = JSON.parse(text);
   } catch {
-    throw new Error('Die Datei ist kein gültiges KlarTakt-Backup.');
+    throw new Error('Die Datei ist kein gültiges Tagesanker-Backup.');
   }
-  if ((parsed as { format?: string }).format === 'klartakt-encrypted') {
+  if ((parsed as { format?: string }).format === 'tagesanker-encrypted') {
     if (!password) throw new Error('Dieses Backup ist verschlüsselt. Bitte Passwort eingeben.');
     parsed = JSON.parse(await decryptText(parsed as EncryptedPayload, password));
   }
   const backup = parsed as BackupFile;
-  if (backup.format !== 'klartakt-backup' || !backup.tables) throw new Error('Die Datei ist kein gültiges KlarTakt-Backup.');
+  if (backup.format !== 'tagesanker-backup' || !backup.tables) throw new Error('Die Datei ist kein gültiges Tagesanker-Backup.');
   await database.transaction('rw', TABLES.map((t) => database.table(t)), async () => {
     for (const name of TABLES) {
       const table = database.table(name);
@@ -85,7 +85,7 @@ export async function restoreBackupText(text: string, password?: string, databas
 }
 
 /** Löscht ALLE Daten unwiderruflich. */
-export async function wipeAll(database: KlarTaktDB = db): Promise<void> {
+export async function wipeAll(database: TagesankerDB = db): Promise<void> {
   await database.transaction('rw', TABLES.map((t) => database.table(t)), async () => {
     for (const name of TABLES) await database.table(name).clear();
   });
@@ -99,7 +99,7 @@ export async function wipeAll(database: KlarTaktDB = db): Promise<void> {
 export function backupFileName(encrypted: boolean): string {
   const d = new Date();
   const stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  return `klartakt-backup-${stamp}${encrypted ? '.verschluesselt' : ''}.json`;
+  return `tagesanker-backup-${stamp}${encrypted ? '.verschluesselt' : ''}.json`;
 }
 
 /** Bietet eine Textdatei zum Speichern an (Browser-Download bzw. Android-Share-Sheet über WebView-Download). */

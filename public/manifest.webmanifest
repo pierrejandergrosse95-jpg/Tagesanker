@@ -1,6 +1,6 @@
 {
-  "name": "KlarTakt",
-  "short_name": "KlarTakt",
+  "name": "Tagesanker",
+  "short_name": "Tagesanker",
   "description": "Dein Alltag. Dein Rhythmus. Deine innere Balance.",
   "start_url": "./",
   "display": "standalone",

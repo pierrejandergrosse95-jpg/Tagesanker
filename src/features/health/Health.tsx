@@ -83,7 +83,7 @@ function MedEditor({ med, onClose }: { med: Med | null; onClose: () => void }) {
         </div>
         <Field label="Farbe"><ColorPicker value={m.color} onChange={(color) => set({ color })} /></Field>
         <label className="row"><input type="checkbox" checked={!!m.active} onChange={(e) => set({ active: e.target.checked ? 1 : 0 })} /> Aktiv (Erinnerungen & Tagesplan)</label>
-        <Hint>KlarTakt dient nur der Organisation. Dosierung und Einnahme bitte immer mit Ärztin, Arzt oder Apotheke abstimmen.</Hint>
+        <Hint>Tagesanker dient nur der Organisation. Dosierung und Einnahme bitte immer mit Ärztin, Arzt oder Apotheke abstimmen.</Hint>
       </div>
     </Sheet>
   );

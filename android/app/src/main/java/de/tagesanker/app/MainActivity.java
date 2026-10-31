@@ -1,4 +1,4 @@
-package de.klartakt.app;
+package de.tagesanker.app;
 
 import com.getcapacitor.BridgeActivity;
 

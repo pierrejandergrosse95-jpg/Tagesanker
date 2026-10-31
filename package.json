@@ -1,7 +1,7 @@
 {
-  "name": "klartakt",
+  "name": "tagesanker",
   "version": "0.1.0",
-  "description": "KlarTakt – Dein Alltag. Dein Rhythmus. Deine innere Balance.",
+  "description": "Tagesanker – Dein Alltag. Dein Rhythmus. Deine innere Balance.",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit -p tsconfig.json && vite build",

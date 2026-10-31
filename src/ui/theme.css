@@ -1,4 +1,4 @@
-/* KlarTakt Design-System – Tokens & Basisstile */
+/* Tagesanker Design-System – Tokens & Basisstile */
 :root {
   --forest: #1f3a2e;
   --forest-2: #2c4d3d;
@@ -318,3 +318,5 @@ button.card.tap:not(.row):not(.tile) { display: block; }
 .pin-dots i.on { background: var(--forest); }
 .pin-pad { display: grid; grid-template-columns: repeat(3, 72px); gap: 14px; }
 .pin-pad button { width: 72px; height: 72px; border-radius: 50%; border: 0; background: var(--card); box-shadow: var(--shadow); font-size: 24px; font-family: var(--serif); }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

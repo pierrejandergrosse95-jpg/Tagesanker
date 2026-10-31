@@ -1,8 +1,8 @@
-# KlarTakt
+# Tagesanker
 
 *Dein Alltag. Dein Rhythmus. Deine innere Balance.*
 
-KlarTakt ist ein persönlicher Alltags- und Lebensplaner für Android. Die App verbindet
+Tagesanker ist ein persönlicher Alltags- und Lebensplaner für Android. Die App verbindet
 Organisation (Schichten, Termine, Aufgaben, Finanzen, Medikamente, Notizen, Gewohnheiten)
 mit einem ruhigen spirituellen Bereich (Geburtsprofil, Sternzeichen, Mondkalender,
 Meditation, Tagesimpulse, Tarot, Tagebuch).
@@ -26,7 +26,7 @@ Meditation, Tagesimpulse, Tarot, Tagebuch).
 | Spiritualität | Geburtsprofil → Sternzeichen, Eigenschaften, Stärken, Entwicklungsthemen; vereinfachtes Geburtshoroskop (Sonne, Mond, Aszendent); Tages-, Wochen-, Monatsimpulse; Mondkalender (astronomisch berechnet) mit Bedeutung, Fragen, Ritualen; geführte Meditationen, Timer, Atemübungen, eigene Audiodateien; Tarot (Tageskarte, Drei-Karten-Legung, Verlauf); Tagebuch mit Reflexionsfragen, Stimmung, Dankbarkeit, PIN-Schutz |
 | System | Globale Suche, Benachrichtigungen je Kategorie schaltbar, Hell/Dunkel/System, Backup (optional AES-256-verschlüsselt), Wiederherstellen, alles löschen |
 
-KlarTakt gibt keine medizinischen, finanziellen oder zukunftsbezogenen Ratschläge.
+Tagesanker gibt keine medizinischen, finanziellen oder zukunftsbezogenen Ratschläge.
 Astrologie, Tarot und Impulse sind als spirituelle Anregungen gekennzeichnet.
 
 ## Entwicklung
@@ -49,7 +49,7 @@ npm run android:open   # Öffnet Android Studio → Gerät wählen → ▶ Ausf�
 
 Ohne eigene Entwicklungsumgebung: Der GitHub-Workflow **„Tests & Android-APK“** baut bei
 jedem Push eine Debug-APK. Sie liegt im Workflow-Lauf unter *Artifacts →
-KlarTakt-debug-apk* und lässt sich direkt auf dem Smartphone installieren
+Tagesanker-debug-apk* und lässt sich direkt auf dem Smartphone installieren
 („Installation aus unbekannten Quellen“ erlauben).
 
 Für eine Veröffentlichung im Play Store wird ein Release-Build mit eigenem Signaturschlüssel benötigt

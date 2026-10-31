@@ -24,8 +24,8 @@ export default function Onboarding() {
     <div className="screen" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingBottom: 40 }}>
       {step === 0 && (
         <div className="stack center" style={{ alignItems: 'center' }}>
-          <img src="./icon-512.png" alt="" width={140} height={140} style={{ borderRadius: 32, boxShadow: 'var(--shadow)' }} />
-          <h1 style={{ fontSize: 34 }}>KlarTakt</h1>
+          <img src="./icon-512.png" alt="" width={180} height={180} style={{ borderRadius: 32, boxShadow: 'var(--shadow)' }} />
+          <h1 className="sr-only">Tagesanker</h1>
           <p className="serif muted" style={{ fontSize: 18 }}>Dein Alltag. Dein Rhythmus.<br />Deine innere Balance.</p>
           <div className="card stack" style={{ textAlign: 'left', marginTop: 12 }}>
             <div className="row"><Leaf size={20} className="gold-text" /><span className="small">Schichten, Termine, Aufgaben, Finanzen und Medikamente an einem Ort.</span></div>
@@ -59,7 +59,7 @@ export default function Onboarding() {
         <div className="stack center" style={{ alignItems: 'center' }}>
           <Bell size={44} className="gold-text" />
           <h1>Erinnerungen</h1>
-          <p className="small muted">KlarTakt erinnert dich an Schichten, Medikamente, Zahlungen, Termine und deinen Tagesimpuls. Jede Art lässt sich später einzeln abschalten.</p>
+          <p className="small muted">Tagesanker erinnert dich an Schichten, Medikamente, Zahlungen, Termine und deinen Tagesimpuls. Jede Art lässt sich später einzeln abschalten.</p>
           <button className="btn block" onClick={async () => { await requestPermission(); await finish(); }}>Benachrichtigungen erlauben</button>
           <button className="btn ghost block" onClick={finish}>Später</button>
         </div>

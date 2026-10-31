@@ -1,9 +1,9 @@
-# KlarTakt – Technisches und gestalterisches Konzept
+# Tagesanker – Technisches und gestalterisches Konzept
 
 > *Dein Alltag. Dein Rhythmus. Deine innere Balance.*
 
 Dieses Dokument beschreibt die Architektur, das Datenmodell, die Gestaltung und die
-Ausbaustufen von KlarTakt. Es ist die Grundlage für die Implementierung in diesem
+Ausbaustufen von Tagesanker. Es ist die Grundlage für die Implementierung in diesem
 Repository und wird mit der App weitergepflegt.
 
 ---

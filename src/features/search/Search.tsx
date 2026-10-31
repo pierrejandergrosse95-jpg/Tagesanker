@@ -50,7 +50,7 @@ export default function SearchScreen() {
         <Search size={18} className="faint" />
         <input className="input" autoFocus style={{ border: 0, background: 'transparent', boxShadow: 'none' }} placeholder="Aufgaben, Termine, Notizen, Zahlungen …" value={q} onChange={(e) => setQ(e.target.value)} />
       </div>
-      {query.length < 2 ? <Empty icon={<Search size={30} />} text="Durchsuche alle Bereiche von KlarTakt." /> : hits?.length ? (
+      {query.length < 2 ? <Empty icon={<Search size={30} />} text="Durchsuche alle Bereiche von Tagesanker." /> : hits?.length ? (
         <div className="list">
           {hits.map((h) => (
             <button key={h.key} className="list-item" onClick={() => nav(h.to)}>

@@ -43,7 +43,7 @@ export async function verifyPin(pin: string, stored: string): Promise<boolean> {
 }
 
 export interface EncryptedPayload {
-  format: 'klartakt-encrypted';
+  format: 'tagesanker-encrypted';
   v: 1;
   salt: string;
   iv: string;
@@ -60,7 +60,7 @@ export async function encryptText(plain: string, password: string): Promise<Encr
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const key = await aesKey(password, salt);
   const data = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(plain));
-  return { format: 'klartakt-encrypted', v: 1, salt: toB64(salt), iv: toB64(iv), data: toB64(data) };
+  return { format: 'tagesanker-encrypted', v: 1, salt: toB64(salt), iv: toB64(iv), data: toB64(data) };
 }
 
 export async function decryptText(payload: EncryptedPayload, password: string): Promise<string> {

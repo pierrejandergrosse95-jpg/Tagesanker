@@ -5,7 +5,7 @@ import type {
   Shift, ShiftPattern, ShiftType, Task, TarotDraw,
 } from './types';
 
-export class KlarTaktDB extends Dexie {
+export class TagesankerDB extends Dexie {
   settings!: Table<Settings, string>;
   profile!: Table<Profile, string>;
   shiftTypes!: Table<ShiftType, number>;
@@ -29,7 +29,7 @@ export class KlarTaktDB extends Dexie {
   audio!: Table<AudioFile, number>;
   impulses!: Table<ImpulseLog, string>;
 
-  constructor(name = 'klartakt') {
+  constructor(name = 'tagesanker') {
     super(name);
     // Schema-Version 1. Neue Felder/Indizes → neue .version(n) mit Migration ergänzen.
     this.version(1).stores({
@@ -59,7 +59,7 @@ export class KlarTaktDB extends Dexie {
   }
 }
 
-export const db = new KlarTaktDB();
+export const db = new TagesankerDB();
 
 /** Alle Tabellennamen – für Backup/Export/Löschen. */
 export const TABLES = [
@@ -115,7 +115,7 @@ export const DEFAULT_HABITS: Habit[] = [
 ];
 
 /** Legt beim ersten Start Grunddaten an. Idempotent. */
-export async function ensureSeed(database: KlarTaktDB = db): Promise<void> {
+export async function ensureSeed(database: TagesankerDB = db): Promise<void> {
   await database.transaction('rw', [database.settings, database.shiftTypes, database.habits], async () => {
     const s = await database.settings.get('main');
     if (!s) await database.settings.put(DEFAULT_SETTINGS);

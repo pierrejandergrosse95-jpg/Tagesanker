@@ -41,5 +41,5 @@ jobs:
       - name: APK hochladen
         uses: actions/upload-artifact@v4
         with:
-          name: KlarTakt-debug-apk
+          name: Tagesanker-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk

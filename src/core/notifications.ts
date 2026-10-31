@@ -143,7 +143,7 @@ export async function rescheduleAll(): Promise<number> {
         body: r.body || ' ',
         schedule: { at: r.at, allowWhileIdle: true },
         extra: { route: r.route },
-        channelId: 'klartakt',
+        channelId: 'tagesanker',
       })),
     });
     return reminders.length;
@@ -164,7 +164,7 @@ export async function rescheduleAll(): Promise<number> {
 export async function initNotifications(navigate: (route: string) => void): Promise<void> {
   if (!isNative()) return;
   try {
-    await LocalNotifications.createChannel({ id: 'klartakt', name: 'Erinnerungen', description: 'Erinnerungen von KlarTakt', importance: 4, visibility: 0 });
+    await LocalNotifications.createChannel({ id: 'tagesanker', name: 'Erinnerungen', description: 'Erinnerungen von Tagesanker', importance: 4, visibility: 0 });
   } catch {
     /* ältere Android-Versionen ohne Kanäle */
   }

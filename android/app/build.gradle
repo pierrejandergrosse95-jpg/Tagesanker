@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "de.klartakt.app"
+    namespace = "de.tagesanker.app"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "de.klartakt.app"
+        applicationId "de.tagesanker.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

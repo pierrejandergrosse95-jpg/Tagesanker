@@ -60,7 +60,7 @@ export default function ProfileScreen() {
       {editing || !sign ? (
         <div className="card stack">
           <h3>Dein Geburtsprofil</h3>
-          <p className="small muted">Aus dem Geburtsdatum bestimmt KlarTakt dein Sternzeichen. Mit Geburtszeit und -ort entsteht zusätzlich ein vereinfachtes Geburtshoroskop (Sonne, Mond, Aszendent).</p>
+          <p className="small muted">Aus dem Geburtsdatum bestimmt Tagesanker dein Sternzeichen. Mit Geburtszeit und -ort entsteht zusätzlich ein vereinfachtes Geburtshoroskop (Sonne, Mond, Aszendent).</p>
           <BirthForm value={p} onChange={setP} />
           {p.birthDate && p.birthTime && (
             <Field label="Zeitzone zur Geburt">
