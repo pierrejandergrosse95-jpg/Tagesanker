@@ -1,59 +1,63 @@
 /* Tagesanker Design-System – Tokens & Basisstile */
 :root {
-  --forest: #1f3a2e;
-  --forest-2: #2c4d3d;
-  --sage: #a9bfa3;
-  --sage-soft: #dfe7d8;
-  --cream: #f4efe4;
-  --card: #fbf8f1;
-  --card-2: #efe9dc;
-  --gold: #c9a55c;
-  --gold-soft: #f1e4c4;
-  --text: #1f2a22;
-  --text-2: #5d665d;
-  --text-3: #8b928a;
-  --line: #e4dccb;
-  --danger: #b5543f;
-  --danger-soft: #f4dcd3;
-  --ok: #4e8a5f;
-  --info: #6e8fcb;
-  --shadow: 0 1px 2px rgb(31 42 34 / 0.05), 0 4px 16px rgb(31 42 34 / 0.06);
-  --radius: 18px;
-  --radius-sm: 12px;
-  --serif: 'Cormorant Garamond', 'Noto Serif', Georgia, 'Times New Roman', serif;
-  --script: 'Great Vibes', 'Cormorant Garamond', cursive;
-  --rose: #b88a8e;
-  --navy: #3e4c7a;
-  --sand: #d8ae7e;
+  /* Zauberschul-Palette: Pergament, Tinte, Bordeaux, altes Gold */
+  --forest: #6b1f2a;        /* Primärfarbe: Bordeaux */
+  --forest-2: #8a2c38;
+  --sage: #a8843f;          /* Akzent/Fortschritt: Bronze */
+  --sage-soft: #ecdfbf;
+  --cream: #ece0c2;         /* Hintergrund: Pergament */
+  --card: #f7eed8;
+  --card-2: #e7d7b2;
+  --gold: #b8913a;
+  --gold-soft: #f0e2b8;
+  --text: #2b1f17;          /* Tinte */
+  --text-2: #6a5644;
+  --text-3: #9a8670;
+  --line: #d6c299;
+  --danger: #9e2b2b;
+  --danger-soft: #f1d6cc;
+  --ok: #3f6b4a;
+  --info: #3e4c7a;
+  --shadow: 0 1px 2px rgb(60 35 15 / 0.08), 0 6px 18px rgb(60 35 15 / 0.10);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --display: 'Cinzel', 'Trajan Pro', Georgia, serif;
+  --serif: 'IM Fell English', 'Noto Serif', Georgia, 'Times New Roman', serif;
+  --script: 'Cinzel Decorative', 'Cinzel', Georgia, serif;
+  --rose: #8a2c38;
+  --navy: #2a2f52;
+  --sand: #c9a35a;
   --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --nav-h: 64px;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --cosmic-1: #1b2433;
-  --cosmic-2: #2b2f4a;
-  --on-primary: #ffffff;
+  --cosmic-1: #120f1c;
+  --cosmic-2: #2a2140;
+  --on-primary: #fbf3de;
+  --paper: radial-gradient(120% 80% at 10% 0%, rgb(255 250 235 / 0.65), transparent 60%), radial-gradient(90% 70% at 100% 100%, rgb(190 150 90 / 0.12), transparent 70%);
   color-scheme: light;
 }
 
 :root[data-theme='dark'] {
-  --forest: #a9c6a8;
-  --forest-2: #8fb08e;
-  --sage: #6f8c6e;
-  --sage-soft: #263329;
-  --cream: #121813;
-  --card: #1b231d;
-  --card-2: #232d26;
-  --gold: #d9b873;
-  --gold-soft: #3a3322;
-  --text: #ebe7dc;
-  --text-2: #b5b9ae;
-  --text-3: #858b82;
-  --line: #2e3a31;
-  --danger: #e08a76;
-  --danger-soft: #3d2822;
+  --forest: #d6b05c;        /* Gold als Primärfarbe in der Nacht */
+  --forest-2: #e3c477;
+  --sage: #b08a45;
+  --sage-soft: #2b2333;
+  --cream: #110e18;
+  --card: #1b1724;
+  --card-2: #252030;
+  --gold: #d6b05c;
+  --gold-soft: #3a2f22;
+  --text: #efe5cf;
+  --text-2: #bfb29b;
+  --text-3: #8d8272;
+  --line: #352d40;
+  --danger: #e07b6e;
+  --danger-soft: #3b2025;
   --ok: #8cc49a;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
-  --on-primary: #10180f;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 18px rgb(0 0 0 / 0.35);
+  --on-primary: #1a1410;
+  --paper: radial-gradient(120% 80% at 10% 0%, rgb(214 176 92 / 0.06), transparent 60%);
   color-scheme: dark;
 }
 
@@ -61,7 +65,8 @@
 html, body, #root { height: 100%; }
 body {
   margin: 0;
-  background: var(--cream);
+  background: var(--paper), var(--cream);
+  background-attachment: fixed;
   color: var(--text);
   font-family: var(--sans);
   font-size: 15px;
@@ -72,10 +77,11 @@ body {
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 a { color: inherit; text-decoration: none; }
-h1, h2, h3, .serif { font-family: var(--serif); font-weight: 600; letter-spacing: -0.01em; margin: 0; }
-h1 { font-size: 30px; line-height: 1.15; }
-h2 { font-size: 22px; }
-h3 { font-size: 19px; }
+h1, h2 { font-family: var(--display); font-weight: 600; letter-spacing: 0.02em; margin: 0; }
+h3, .serif { font-family: var(--serif); font-weight: 400; margin: 0; }
+h1 { font-size: 25px; line-height: 1.2; }
+h2 { font-size: 18px; }
+h3 { font-size: 20px; }
 p { margin: 0; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -92,7 +98,7 @@ p { margin: 0; }
 @keyframes fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
 .topbar { display: flex; align-items: center; gap: 8px; min-height: 48px; margin-bottom: 12px; }
-.topbar h1 { flex: 1; font-size: 30px; }
+.topbar h1 { flex: 1; font-size: 25px; }
 .topbar .sub { color: var(--text-2); font-size: 13px; }
 
 .stack { display: flex; flex-direction: column; gap: 12px; }
@@ -110,18 +116,19 @@ p { margin: 0; }
 .center { text-align: center; }
 .ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .section-title { display: flex; align-items: center; justify-content: space-between; margin: 18px 2px 8px; }
-.section-title h2 { font-size: 21px; }
+.section-title h2 { font-size: 16px; letter-spacing: 0.06em; }
 .section-title a, .section-title button { font-size: 13px; color: var(--forest); background: none; border: 0; font-weight: 600; }
 .mt { margin-top: 12px; }
 .mb { margin-bottom: 12px; }
 
 /* ---------- Karten ---------- */
 .card {
-  background: var(--card);
+  background: var(--paper), var(--card);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  /* doppelte Goldlinie wie bei alten Buchseiten */
+  box-shadow: inset 0 0 0 3px var(--card), inset 0 0 0 4px color-mix(in srgb, var(--gold) 35%, transparent), var(--shadow);
   padding: 14px 16px;
-  border: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--line));
 }
 .card.flat { box-shadow: none; }
 .card.tint { background: var(--sage-soft); }
@@ -138,7 +145,7 @@ button.card.tap:not(.row):not(.tile):not(.feature-tile) { display: block; }
 .tile .big { font-family: var(--serif); font-size: 22px; line-height: 1.1; }
 
 /* ---------- Listen ---------- */
-.list { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; border: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+.list { background: var(--paper), var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--line)); }
 .list-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--line); min-height: 54px; width: 100%; background: none; border-left: 0; border-right: 0; border-top: 0; text-align: left; }
 .list-item:last-child { border-bottom: 0; }
 .list-item .title { font-weight: 500; }
@@ -150,8 +157,9 @@ button.card.tap:not(.row):not(.tile):not(.feature-tile) { display: block; }
 /* ---------- Buttons ---------- */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  min-height: 44px; padding: 0 18px; border-radius: 999px; border: 0;
-  background: var(--forest); color: var(--on-primary); font-weight: 600; font-size: 14.5px;
+  min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--gold) 70%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--forest) 88%, #fff), var(--forest)); color: var(--on-primary); font-weight: 600; font-size: 14.5px;
+  font-family: var(--display); letter-spacing: 0.04em;
   transition: filter 0.15s, transform 0.1s;
 }
 .btn:active { transform: scale(0.98); }
@@ -365,3 +373,16 @@ button.card.tap:not(.row):not(.tile):not(.feature-tile) { display: block; }
 
 .avatar-ring { width: 120px; height: 120px; border-radius: 50%; padding: 4px; background: linear-gradient(135deg, var(--gold), #f1e4c4, var(--gold)); margin: 0 auto; }
 .avatar-ring > div { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; }
+
+/* ---------- Zauberschul-Akzente ---------- */
+.ornament { display: flex; align-items: center; gap: 10px; color: var(--gold); font-family: var(--display); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; }
+.ornament::before, .ornament::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.wax-seal { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; color: #f5dca0;
+  background: radial-gradient(circle at 35% 30%, #a33a44, #6b1f2a 60%, #4a121b); box-shadow: 0 4px 12px rgb(60 10 20 / 0.45), inset 0 -3px 6px rgb(0 0 0 / 0.3), inset 0 2px 4px rgb(255 255 255 / 0.15); }
+.feature-tile svg { color: var(--forest); }
+.bottom-nav { border-top: 1px solid color-mix(in srgb, var(--gold) 45%, var(--line)); }
+.bottom-nav .plus button { background: radial-gradient(circle at 35% 30%, #a33a44, #6b1f2a 60%, #4a121b); color: #f5dca0; border-color: var(--cream); box-shadow: 0 6px 18px rgb(80 15 25 / 0.45); }
+.segmented button.active, .chip.active { font-family: var(--display); letter-spacing: 0.03em; }
+.splash-title { font-family: var(--script); font-weight: 700; font-size: 46px; letter-spacing: 0.02em; color: #f3dca0; text-shadow: 0 0 18px rgb(255 200 120 / 0.45), 0 3px 10px rgb(0 0 0 / 0.6); }
+.quote-card p { font-family: var(--serif); }
+.card.cosmic { box-shadow: var(--shadow), inset 0 0 0 1px rgb(214 176 92 / 0.45); background: radial-gradient(1200px 500px at 70% -10%, #3a2f5c 0%, transparent 60%), linear-gradient(180deg, var(--cosmic-2), var(--cosmic-1)); }

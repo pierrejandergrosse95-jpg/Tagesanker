@@ -150,11 +150,11 @@ Datumswerte als ISO-Tag `YYYY-MM-DD`, Uhrzeiten als `HH:MM` (lokale Zeit).
 
 | Token | Hell | Nacht |
 | --- | --- | --- |
-| Waldgrün (Primär) | `#1F3A2E` | `#A9C6A8` |
-| Salbei | `#A9BFA3` | `#6F8C6E` |
-| Creme (Hintergrund) | `#F4EFE4` | `#141A16` |
-| Karte | `#FBF8F1` | `#1D2520` |
-| Gold (Akzent) | `#C9A55C` | `#D9B873` |
+| Bordeaux / Gold (Primär) | `#6B1F2A` | `#D6B05C` |
+| Bronze (Akzent) | `#A8843F` | `#B08A45` |
+| Pergament (Hintergrund) | `#ECE0C2` | `#110E18` |
+| Karte | `#F7EED8` | `#1B1724` |
+| Tinte (Text) | `#2B1F17` | `#EFE5CF` |
 
 - **Typografie:** Serifenschrift für Überschriften (ruhig, hochwertig), klare
   Sans-Serif für Inhalte. Systemschriften als Fallback – offline verfügbar.
@@ -172,12 +172,14 @@ Finanzen, Gewohnheiten, Notizen, Tagesimpuls, Meditation, Mond, Astrologie, Taro
 Das zentrale „＋“ legt Aufgabe, Termin, Schicht, Ausgabe oder Notiz an. „Profil“ bündelt Name,
 Motto, Begleiter-Avatar, Einstellungen, Erinnerungen und Datensicherung.
 
-**Märchen-Stil:** Eigene, vektorbasierte Illustrationen (`src/ui/scenes.tsx`) – Schloss, See,
-Laternen, Sternenhimmel, Blattranken und Tier-Silhouetten (Fuchs, Hirsch, Eule, Huhn, Katze) in
-sechs Lichtstimmungen. Die Startseite wechselt die Stimmung mit der Tageszeit. Schreibschrift
-(Great Vibes) für den Schriftzug, Cormorant Garamond für Überschriften – beide offline gebündelt.
-Das Tarot nutzt ein eigenes illustriertes Kartenset (`assets/tarot-original.png`, Zuschnitt per
-`scripts/generate-tarot.py`).
+**Zauberschul-Stil:** Pergament, Tinte, Bordeaux und altes Gold; Karten mit doppelter Goldlinie
+wie alte Buchseiten, Wachssiegel-Plus in der Navigation. Eigene, vektorbasierte Illustrationen
+(`src/ui/scenes.tsx`): gotisches Schloss am See, schwebende Kerzen, fliegende Eulen, Sternenhimmel,
+Zauberwald und Tier-Silhouetten (Eule, Katze, Hirsch, Fuchs, Huhn) in sechs Lichtstimmungen; die
+Startseite wechselt die Stimmung mit der Tageszeit. Schriften: Cinzel (Überschriften),
+Cinzel Decorative (Schriftzug), IM Fell English (Zitate) – offline gebündelt. Bewusst ohne
+geschützte Namen, Figuren oder Wappen aus bekannten Fantasy-Reihen. Das Tarot nutzt ein eigenes
+illustriertes Kartenset (`assets/tarot-original.png`, Zuschnitt per `scripts/generate-tarot.py`).
 
 ---
 

@@ -25,13 +25,13 @@ export default function Onboarding() {
     <div className="screen" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingBottom: 40 }}>
       {step === 0 && (
         <div className="splash">
-          <Scene variant="sunset" animal="fox" foliage seed={5} extraSky={480} />
+          <Scene variant="lanterns" animal="owl" seed={5} extraSky={480} lanterns={26} />
           <div className="splash-content">
-            <Anchor size={44} color="#fff1c8" strokeWidth={1.6} />
+            <Anchor size={40} color="#f3dca0" strokeWidth={1.5} />
             <div className="splash-title" style={{ marginTop: 8 }}>Tagesanker</div>
             <p className="serif" style={{ fontSize: 20, marginTop: 10, textShadow: '0 1px 8px rgb(0 0 0 / .4)' }}>Dein Alltag. Dein Rhythmus.<br />Deine innere Balance.</p>
             <div className="grow" />
-            <button className="btn light" style={{ minWidth: 200 }} onClick={() => setStep(1)}>Los geht’s →</button>
+            <button className="btn" style={{ minWidth: 220 }} onClick={() => setStep(1)}>Die Reise beginnt →</button>
             <p className="tiny" style={{ marginTop: 14, opacity: 0.85 }}>Privat & offline – deine Daten bleiben auf deinem Gerät.</p>
           </div>
         </div>

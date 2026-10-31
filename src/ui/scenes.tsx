@@ -1,5 +1,6 @@
 /**
- * Eigene Märchen-Illustrationen als SVG – Schloss, Seen, Laternen, Sternenhimmel und Tier-Silhouetten.
+ * Eigene Illustrationen im Stil einer Zauberschule (SVG): gotisches Schloss, schwebende Kerzen,
+ * Eulen, Sternenhimmel, See und Tier-Silhouetten.
  * Alles vektorbasiert: offline, gestochen scharf in jeder Größe, kaum Speicherbedarf.
  */
 import { useId, type CSSProperties, type ReactNode } from 'react';
@@ -20,12 +21,18 @@ interface Palette {
 }
 
 const PALETTES: Record<SceneVariant, Palette> = {
-  sunset: { sky: ['#2f3c63', '#a8687a', '#e9a66b', '#f8dfa4'], glow: '#ffe7a8', orb: '#fff4cf', far: '#8a6f86', mid: '#4f4a5e', near: '#1e2620', castle: '#5e4f66', water: '#c98f74', windows: '#ffd98a' },
-  night: { sky: ['#0b1230', '#1d2852', '#34477a', '#56679b'], glow: '#c9d6ff', orb: '#f6efd6', far: '#2a3560', mid: '#1b2447', near: '#0b1020', castle: '#151c3a', water: '#2a3a6a', windows: '#ffd36e' },
-  dawn: { sky: ['#e9d9c2', '#f2cfae', '#e7b49e', '#f7e6cf'], glow: '#fff6dc', orb: '#fffaf0', far: '#c8adb0', mid: '#9c8c86', near: '#4c5a46', castle: '#b29aa2', water: '#e6c3ad', windows: '#ffe2a8' },
-  forest: { sky: ['#e8dcae', '#d9d6a0', '#a9bf8e', '#7f9a6e'], glow: '#fff3c0', orb: '#fffbe6', far: '#8ea283', mid: '#55704f', near: '#1f3a2e', castle: '#7d8f78', windows: '#ffe39a' },
-  lanterns: { sky: ['#14183a', '#3a2f5e', '#8a5276', '#d98f72'], glow: '#ffc778', orb: '#ffe7b0', far: '#4a3b62', mid: '#2a2346', near: '#100f22', castle: '#2b2448', water: '#5a3f62', windows: '#ffcf7a' },
-  meadow: { sky: ['#bcd3e6', '#e6e6cf', '#f4e2b8', '#f9efd2'], glow: '#fff3c8', orb: '#fffaea', far: '#a8b9a6', mid: '#7f9a6e', near: '#3d5a3a', castle: '#a39aa8', windows: '#ffe2a0' },
+  // Dämmerung über dem Schloss
+  sunset: { sky: ['#1a1430', '#47284d', '#8a3a46', '#d8874e'], glow: '#ffc27a', orb: '#ffe2b0', far: '#3b2a47', mid: '#251b33', near: '#0e0b15', castle: '#1d1628', water: '#5b3048', windows: '#ffc864' },
+  // Sternennacht
+  night: { sky: ['#05061a', '#11143a', '#20265a', '#363d72'], glow: '#c8d2ff', orb: '#f6efd6', far: '#1a1f45', mid: '#10142f', near: '#05060f', castle: '#0c0f26', water: '#1c2552', windows: '#ffcf6a' },
+  // Nebliger Morgen
+  dawn: { sky: ['#b9b8c6', '#d3cbc4', '#cdb6a2', '#e7dccb'], glow: '#fff1d6', orb: '#fff8ea', far: '#9e97a6', mid: '#77707f', near: '#2d3027', castle: '#5f5869', water: '#c8bcb0', windows: '#ffd99a' },
+  // Dunkler Zauberwald
+  forest: { sky: ['#07120f', '#13261e', '#22392c', '#3a5440'], glow: '#d8f2b4', orb: '#eef7dc', far: '#1e3326', mid: '#14251b', near: '#050c08', castle: '#1a2a20', windows: '#e8f5a0' },
+  // Schwebende Kerzen
+  lanterns: { sky: ['#0b0814', '#1d1530', '#33223c', '#5a3438'], glow: '#ffbf6a', orb: '#ffdca0', far: '#2a1f38', mid: '#1a1326', near: '#08060e', castle: '#160f22', water: '#3a2436', windows: '#ffc864' },
+  // Trüber Tag auf den Schlossgründen
+  meadow: { sky: ['#8f9fb0', '#b7bdbd', '#d2cab4', '#e6dcc3'], glow: '#fff3d0', orb: '#fffaea', far: '#7f8a86', mid: '#56614f', near: '#26301f', castle: '#55505f', windows: '#ffd890' },
 };
 
 /** Deterministischer Pseudozufall, damit Sterne/Laternen stabil bleiben. */
@@ -38,26 +45,36 @@ function rng(seed: number) {
 }
 
 function Castle({ x, y, s, color, windows }: { x: number; y: number; s: number; color: string; windows: string }) {
-  // Türme: [x, Breite, Höhe, Spitzenhöhe]
+  // Gotisches Schloss: [x, Breite, Höhe, Spitzenhöhe]
   const towers: [number, number, number, number][] = [
-    [-34, 8, 26, 12], [-24, 10, 38, 16], [-12, 9, 30, 13], [-3, 12, 52, 22], [10, 9, 34, 14], [20, 10, 42, 17], [31, 8, 24, 11],
+    [-52, 7, 30, 16], [-43, 9, 46, 26], [-31, 6, 34, 18], [-22, 11, 58, 30], [-8, 8, 40, 20], [2, 14, 74, 38],
+    [19, 8, 50, 26], [30, 10, 62, 32], [43, 6, 36, 18], [52, 8, 28, 15],
   ];
   return (
-    <g transform={`translate(${x} ${y}) scale(${s})`}>
-      <rect x={-38} y={-14} width={80} height={14} fill={color} />
-      <path d="M-38 -14 l4 -4 h72 l4 4z" fill={color} />
+    <g transform={`translate(${x} ${y}) scale(${s})`} fill={color}>
+      {/* Felsen */}
+      <path d="M-70 8 C-60 -4 -50 -10 -40 -12 L60 -12 C70 -8 78 0 84 8 Z" />
+      {/* Hauptbau mit Zinnen */}
+      <rect x={-56} y={-20} width={116} height={14} />
+      {Array.from({ length: 14 }, (_, i) => <rect key={i} x={-56 + i * 8.6} y={-23} width={4.5} height={3.5} />)}
       {towers.map(([tx, w, h, sp], i) => (
         <g key={i}>
-          <rect x={tx} y={-h} width={w} height={h} fill={color} />
-          <path d={`M${tx - 1.5} ${-h} L${tx + w / 2} ${-h - sp} L${tx + w + 1.5} ${-h} Z`} fill={color} />
-          <path d={`M${tx + w / 2} ${-h - sp} v-5 l4 1.5 -4 1.5`} stroke={color} strokeWidth={0.8} fill={color} />
-          <rect x={tx + w / 2 - 1} y={-h + 6} width={2} height={3.4} rx={1} fill={windows} opacity={0.9} />
-          {h > 30 && <rect x={tx + w / 2 - 1} y={-h + 15} width={2} height={3.4} rx={1} fill={windows} opacity={0.7} />}
+          <rect x={tx} y={-h} width={w} height={h} />
+          <path d={`M${tx - 1.2} ${-h} L${tx + w / 2} ${-h - sp} L${tx + w + 1.2} ${-h} Z`} />
+          {Array.from({ length: Math.floor(h / 13) }, (_, j) => (
+            <path key={j} d={`M${tx + w / 2 - 1} ${-h + 6 + j * 12} v3 a1 1 0 0 0 2 0 v-3 a1 1 0 0 0 -2 0z`} fill={windows} opacity={(i + j) % 3 === 0 ? 0.35 : 0.9} />
+          ))}
         </g>
       ))}
-      <path d="M-2 0 v-7 a3 3 0 0 1 6 0 v7z" fill={windows} opacity={0.5} />
+      {/* Fensterreihe im Hauptbau */}
+      {Array.from({ length: 9 }, (_, i) => <rect key={i} x={-48 + i * 12} y={-16} width={2} height={4} rx={1} fill={windows} opacity={i % 2 ? 0.5 : 0.9} />)}
     </g>
   );
+}
+
+/** Fliegende Eule/Vogel als einfache Flügel-Silhouette. */
+function Flyer({ x, y, s, color }: { x: number; y: number; s: number; color: string }) {
+  return <path transform={`translate(${x} ${y}) scale(${s})`} d="M-10 0 C-7 -4 -3 -4 0 0 C3 -4 7 -4 10 0 C7 -2 3 -1 0 2 C-3 -1 -7 -2 -10 0 Z" fill={color} />;
 }
 
 /** Tier-Silhouetten (Blick nach rechts), Fußpunkt bei (0,0). */
@@ -221,14 +238,22 @@ export function Scene({ variant = 'sunset', animal = 'none', castle = true, foli
         <circle cx={orbX} cy={orbY} r={variant === 'lanterns' ? 18 : 26} fill={p.orb} opacity={variant === 'lanterns' ? 0.75 : 0.95} />
       )}
 
+      {(variant === 'night' || variant === 'sunset' || variant === 'lanterns') && (
+        <g>
+          <Flyer x={120} y={70} s={1.1} color={p.near} />
+          <Flyer x={150} y={52} s={0.7} color={p.near} />
+          <Flyer x={92} y={92} s={0.55} color={p.near} />
+        </g>
+      )}
+
       {/* Ferne Berge */}
-      <path d={`M0 ${horizon - 40} C40 ${horizon - 70} 70 ${horizon - 60} 100 ${horizon - 48} C130 ${horizon - 80} 170 ${horizon - 76} 200 ${horizon - 50} C240 ${horizon - 72} 290 ${horizon - 86} 330 ${horizon - 52} C360 ${horizon - 66} 385 ${horizon - 60} 400 ${horizon - 50} V${horizon} H0 Z`} fill={p.far} opacity={0.75} />
+      <path d={`M0 ${horizon - 40} C40 ${horizon - 70} 70 ${horizon - 60} 100 ${horizon - 48} C130 ${horizon - 80} 170 ${horizon - 76} 200 ${horizon - 50} C240 ${horizon - 72} 290 ${horizon - 86} 330 ${horizon - 52} C360 ${horizon - 66} 385 ${horizon - 60} 400 ${horizon - 50} V${horizon} H0 Z`} fill={p.far} />
       <rect y={horizon - 50} width="400" height="50" fill={`url(#fog${id})`} />
 
       {castle && (
         <g>
           <path d={`M210 ${horizon - 30} C240 ${horizon - 46} 300 ${horizon - 46} 330 ${horizon - 26} V${horizon} H200 Z`} fill={p.mid} opacity={0.9} />
-          <Castle x={272} y={horizon - 40} s={1.05} color={p.castle} windows={p.windows} />
+          <Castle x={276} y={horizon - 34} s={0.95} color={p.castle} windows={p.windows} />
         </g>
       )}
 
@@ -264,9 +289,9 @@ export function Scene({ variant = 'sunset', animal = 'none', castle = true, foli
       {/* Laternen */}
       {lams.map((l, i) => (
         <g key={i} transform={`translate(${l.x} ${l.y}) scale(${l.s})`}>
-          <circle r={11} fill={`url(#lamp${id})`} />
-          <path d="M-3.5 -5 h7 l-1 9 h-5 z" fill="#ffcf7a" />
-          <rect x={-2.5} y={3.5} width={5} height={1.4} fill="#ff9f55" />
+          <circle cy={-6} r={12} fill={`url(#lamp${id})`} />
+          <rect x={-1.8} y={-3} width={3.6} height={12} rx={0.8} fill="#efe6d2" />
+          <path d="M0 -10 C2 -7 1.6 -4.5 0 -3.6 C-1.6 -4.5 -2 -7 0 -10 Z" fill="#ffd27a" />
         </g>
       ))}
 
@@ -276,8 +301,8 @@ export function Scene({ variant = 'sunset', animal = 'none', castle = true, foli
 
       {foliage && (
         <>
-          <Foliage side="left" color="#2c4a37" light="#5f8061" />
-          <Foliage side="right" color="#2c4a37" light="#5f8061" />
+          <Foliage side="left" color="#1c2a22" light="#3d5546" />
+          <Foliage side="right" color="#1c2a22" light="#3d5546" />
         </>
       )}
     </svg>
