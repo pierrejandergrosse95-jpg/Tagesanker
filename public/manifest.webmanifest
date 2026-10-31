@@ -1,0 +1,11 @@
+{
+  "name": "KlarTakt",
+  "short_name": "KlarTakt",
+  "description": "Dein Alltag. Dein Rhythmus. Deine innere Balance.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#F4EFE4",
+  "theme_color": "#1F3A2E",
+  "lang": "de",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
