@@ -60,7 +60,7 @@ export default function ProfileScreen() {
   if (editing || !sign) {
     return (
       <div className="screen">
-        <HubHero title={t('Geburtsprofil')} scene={{ variant: 'night', seed: 37 }} emblem="star" />
+        <HubHero title={t('Geburtsprofil')} image="astro" />
         <div className="card stack">
           <h3>{t('Dein Geburtsprofil')}</h3>
           <p className="small muted">{t('Aus dem Geburtsdatum bestimmt Tagesanker dein Sternzeichen. Mit Geburtszeit und -ort entsteht zusätzlich ein vereinfachtes Geburtshoroskop (Sonne, Mond, Aszendent).')}</p>
@@ -94,7 +94,7 @@ export default function ProfileScreen() {
 
   return (
     <div className="screen">
-      <HubHero title={t('Geburtsprofil')} scene={{ variant: 'night', seed: 37 }}>
+      <HubHero title={t('Geburtsprofil')} image="astro">
         <div style={{ position: 'absolute', left: 0, right: 0, bottom: 14, textAlign: 'center', color: '#f3e3b8', zIndex: 1, textShadow: '0 2px 10px rgb(0 0 0 / .7)' }}>
           <div className="serif" style={{ fontSize: 'clamp(44px, 12vw, 64px)', lineHeight: 1, color: '#f0d48e' }}>{sign.symbol}</div>
           <div style={{ fontFamily: 'var(--display)', fontSize: 26 }}>{sign.name}</div>

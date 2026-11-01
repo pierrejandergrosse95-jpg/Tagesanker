@@ -10,7 +10,8 @@ import { db } from '../../core/db';
 import { useToday } from '../../core/hooks';
 import { NO_REPEAT } from '../../core/recurrence';
 import type { CalEvent, EventKind, ISODate, Task } from '../../core/types';
-import { Empty, Field, RecurrencePicker, Segmented, Sheet, TopBar, useUi } from '../../ui/components';
+import { HubHero } from '../../ui/hub';
+import { Empty, Field, RecurrencePicker, Segmented, Sheet, useUi } from '../../ui/components';
 import { fmtMoney } from '../finance/logic';
 import { TaskEditor, toggleTask } from '../tasks/Tasks';
 import { itemColor, useAgenda, type AgendaItem } from './agenda';
@@ -199,7 +200,7 @@ export default function CalendarScreen() {
 
   return (
     <div className="screen">
-      <TopBar title="Kalender" actions={<button className="icon-btn filled" aria-label={t('Neuer Termin')} onClick={() => setEditEvent(blankEvent(selected))}><Plus size={22} /></button>} />
+      <HubHero compact back={false} title={t('Kalender')} image="calendar" actions={<button className="icon-btn" aria-label={t('Neuer Termin')} onClick={() => setEditEvent(blankEvent(selected))}><Plus size={24} /></button>} />
       <Segmented value={view} onChange={setView} options={[{ value: 'month', label: 'Monat' }, { value: 'week', label: 'Woche' }, { value: 'day', label: 'Tag' }]} />
       <div className="row between mb">
         <button className="icon-btn" aria-label={t('Zurück')} onClick={() => shiftBy(-1)}><ChevronLeft /></button>

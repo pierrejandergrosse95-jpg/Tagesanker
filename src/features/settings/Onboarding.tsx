@@ -8,7 +8,6 @@ import type { Profile } from '../../core/types';
 import { t } from '../../i18n';
 import { Field, Hint, Segmented } from '../../ui/components';
 import { Emblem } from '../../ui/emblems';
-import { Scene } from '../../ui/scenes';
 import { BirthForm } from '../spirit/Profile';
 
 export default function Onboarding() {
@@ -27,17 +26,13 @@ export default function Onboarding() {
   if (step === 0) {
     return (
       <div className="splash">
-        <Scene variant="night" seed={5} extraSky={480} lanterns={10} />
+        <img className="splash-img" src="./areas/home-full.jpg" alt="" />
         <div className="splash-content">
           <div className="splash-title">Tagesanker</div>
           <p className="serif" style={{ fontSize: 'clamp(17px, 4.6vw, 22px)', marginTop: 8, textShadow: '0 1px 8px rgb(0 0 0 / .6)' }}>
             {t('Dein Alltag. Dein Rhythmus.')}<br />{t('Deine innere Balance.')}
           </p>
           <div className="grow" />
-          <div className="row" style={{ justifyContent: 'space-between', width: '100%', maxWidth: 420, alignItems: 'flex-end' }}>
-            <Emblem name="book" style={{ width: 'clamp(90px, 26vw, 130px)', height: 'clamp(90px, 26vw, 130px)' }} />
-            <Emblem name="candle" style={{ width: 'clamp(60px, 16vw, 90px)', height: 'clamp(60px, 16vw, 90px)' }} />
-          </div>
           <div style={{ width: '100%', maxWidth: 300, marginTop: 10 }}>
             <Segmented value={settings.lang === 'system' ? 'system' : settings.lang} onChange={(l) => void updateSettings({ lang: l })} options={[{ value: 'de', label: 'Deutsch' }, { value: 'en', label: 'English' }, { value: 'system', label: 'Auto' }]} />
           </div>

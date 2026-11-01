@@ -8,7 +8,8 @@ import { updateSettings, useSettings } from '../../core/hooks';
 import { CATEGORY_LABELS, cancelAllNotifications, collectReminders, isNative, permissionState, requestPermission, rescheduleAll } from '../../core/notifications';
 import { pickFile, saveTextFile } from '../../core/platform';
 import type { DashboardWidget, NotifyCategory, Settings, ThemeMode } from '../../core/types';
-import { Field, Hint, Segmented, Sheet, Toggle, TopBar, useUi } from '../../ui/components';
+import { HubHero } from '../../ui/hub';
+import { Field, Hint, Segmented, Sheet, Toggle, useUi } from '../../ui/components';
 
 const WIDGET_LABELS: Record<DashboardWidget, string> = {
   shift: 'Heutige Schicht', today: 'Überblick-Kacheln', meds: 'Medikamente heute', tasks: 'Offene Aufgaben', bills: 'Anstehende Zahlungen',
@@ -162,7 +163,7 @@ export default function SettingsScreen() {
 
   return (
     <div className="screen">
-      <TopBar title="Einstellungen" back />
+      <HubHero compact title={t('Einstellungen')} image="settings" />
       <div className="stack">
         <Group icon={<User size={18} />} title="Profil">
           <Field label="Dein Name"><input className="input" value={s.name} onChange={(e) => set({ name: e.target.value })} /></Field>

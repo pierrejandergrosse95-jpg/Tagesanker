@@ -5,13 +5,17 @@ import { Emblem, type EmblemName } from './emblems';
 import { Scene, type SceneProps } from './scenes';
 
 /** Kopfbild eines Bereichs: Szene + Emblem + Titel (wie in der Gestaltungsvorlage). */
-export function HubHero({ title, sub, scene, emblem, back = true, actions, children }: {
-  title: string; sub?: string; scene: SceneProps; emblem?: EmblemName; back?: boolean | string; actions?: ReactNode; children?: ReactNode;
+/** Bereichsbild aus public/areas (aus der Bildvorlage zugeschnitten). */
+export type AreaImage = 'home' | 'calendar' | 'shifts' | 'health' | 'finance' | 'tasks' | 'notes' | 'habits' | 'spirit' | 'astro' | 'moon' | 'meditation' | 'tarot' | 'journal' | 'settings';
+export const areaImage = (name: AreaImage, tile = false) => `./areas/${name}${tile ? '-tile' : ''}.jpg`;
+
+export function HubHero({ title, sub, scene, image, emblem, back = true, actions, children, compact }: {
+  title: string; sub?: string; scene?: SceneProps; image?: AreaImage; emblem?: EmblemName; back?: boolean | string; actions?: ReactNode; children?: ReactNode; compact?: boolean;
 }) {
   const nav = useNavigate();
   return (
-    <section className="hub-hero">
-      <Scene castle={false} {...scene} />
+    <section className={`hub-hero ${image ? 'has-image' : ''} ${compact ? 'compact' : ''}`}>
+      {image ? <img className="hub-img" src={areaImage(image)} alt="" /> : <Scene castle={false} {...scene} />}
       <div className="bar">
         {back ? (
           <button className="icon-btn" aria-label="←" onClick={() => (typeof back === 'string' ? nav(back) : nav(-1))}><ChevronLeft size={26} /></button>
@@ -20,7 +24,7 @@ export function HubHero({ title, sub, scene, emblem, back = true, actions, child
         {actions ?? <span style={{ width: 40 }} />}
       </div>
       {sub && <div className="sub">{sub}</div>}
-      {emblem && <Emblem name={emblem} className="emblem" />}
+      {emblem && !image && <Emblem name={emblem} className="emblem" />}
       {children}
     </section>
   );
@@ -65,11 +69,11 @@ export function ScrollMenu({ items, initialOpen }: { items: MenuItem[]; initialO
   );
 }
 
-/** Pergament-Kachel mit Emblem. */
-export function EmblemTile({ emblem, label, onClick }: { emblem: EmblemName; label: string; onClick: () => void }) {
+/** Pergament-Kachel mit Bereichsbild (oder Emblem). */
+export function EmblemTile({ emblem, image, label, onClick }: { emblem?: EmblemName; image?: AreaImage; label: string; onClick: () => void }) {
   return (
     <button className="emblem-tile" onClick={onClick}>
-      <Emblem name={emblem} />
+      {image ? <img className="tile-img" src={areaImage(image, true)} alt="" loading="lazy" /> : emblem && <Emblem name={emblem} />}
       <span>{label}</span>
     </button>
   );

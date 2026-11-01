@@ -13,7 +13,7 @@ export default function SpiritHub() {
   const spirit = useDailySpirit(day);
   return (
     <div className="screen">
-      <HubHero title={t('Spiritualität')} sub={t('Meine innere Reise')} back={false} scene={{ variant: 'lanterns', lanterns: 10, seed: 41 }} emblem="crystal" />
+      <HubHero title={t('Spiritualität')} sub={t('Meine innere Reise')} back={false} image="spirit" />
       {spirit && (
         <button className="parchment-card mb" style={{ width: '100%', textAlign: 'center' }} onClick={() => nav('/spirit/impulse')}>
           <div style={{ fontFamily: 'var(--display)', fontSize: 14, letterSpacing: '0.06em' }}>{t('Tagesimpuls')}</div>

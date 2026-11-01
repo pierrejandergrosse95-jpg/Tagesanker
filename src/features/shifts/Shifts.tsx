@@ -9,7 +9,8 @@ import { db } from '../../core/db';
 import { t, t as tr } from '../../i18n';
 import { useSettings, useToday } from '../../core/hooks';
 import type { ISODate, Shift, ShiftKind, ShiftPattern, ShiftType } from '../../core/types';
-import { ColorPicker, Empty, Field, Hint, Segmented, Sheet, TopBar, useUi } from '../../ui/components';
+import { ColorPicker, Empty, Field, Hint, Segmented, Sheet, useUi } from '../../ui/components';
+import { HubHero } from '../../ui/hub';
 import { contrastText, expandPattern, resolveShift, shiftMinutes, workStats } from './logic';
 
 const KIND_LABEL: Record<ShiftKind, string> = { work: 'Arbeit', vacation: 'Urlaub', off: 'Frei', sick: 'Krank' };
@@ -243,7 +244,7 @@ export default function ShiftsScreen() {
 
   return (
     <div className="screen">
-      <TopBar title="Schichtplan" back actions={<button className="icon-btn filled" aria-label={t('Schicht eintragen')} onClick={() => setSelected(day)}><Plus size={22} /></button>} />
+      <HubHero compact title={t('Schichtplan')} image="shifts" actions={<button className="icon-btn" aria-label={t('Schicht eintragen')} onClick={() => setSelected(day)}><Plus size={24} /></button>} />
       <Segmented value={tab} onChange={setTab} options={[{ value: 'month', label: 'Monat' }, { value: 'list', label: 'Liste' }, { value: 'account', label: 'Stunden' }, { value: 'types', label: 'Schichtarten' }]} />
 
       {(tab === 'month' || tab === 'list' || tab === 'account') && (

@@ -66,6 +66,14 @@ Splash-Screens und Web-Icons werden daraus erzeugt:
 python3 scripts/generate-icons.py   # benötigt Pillow
 ```
 
+### Bereichsbilder
+
+Die Kopf- und Kachelbilder der Bereiche werden aus `assets/areas-original.png` zugeschnitten:
+
+```bash
+python3 scripts/generate-areas.py
+```
+
 ### Tarot-Karten
 
 Die Kartenbilder werden aus `assets/tarot-original.png` zugeschnitten (nur das Motiv; Nummer und Name setzt die App):

@@ -22,7 +22,7 @@ export default function SpiritHome() {
 
   return (
     <div className="screen">
-      <HubHero title={t('Tagesimpuls')} sub={fmtLong(day)} scene={{ variant: 'lanterns', lanterns: 12, seed: 41 }} emblem="candle" />
+      <HubHero title={t('Tagesimpuls')} sub={fmtLong(day)} image="home" />
       {spirit && (
         <div className="stack">
           <div className="parchment-card">

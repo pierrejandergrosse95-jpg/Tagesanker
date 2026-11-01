@@ -64,8 +64,7 @@ export default function MoonScreen() {
 
   return (
     <div className="screen">
-      <HubHero title={t('Mondkalender')} scene={{ variant: 'night', seed: 31 }}>
-        <div style={{ position: 'absolute', left: '50%', bottom: 12, transform: 'translateX(-50%)', zIndex: 1, filter: 'drop-shadow(0 0 18px rgb(255 240 200 / .45))' }}><MoonGlyph illumination={now.illumination} waxing={now.waxing} size={72} /></div>
+      <HubHero title={t('Mondkalender')} image="moon">
         <div style={{ position: 'absolute', left: 0, right: 0, top: 'calc(var(--safe-top) + 48px)', textAlign: 'center', color: '#f3e3b8', zIndex: 1, textShadow: '0 2px 10px rgb(0 0 0 / .8)' }}>
           <div className="small">{t('Aktuelle Phase')}</div>
           <div className="serif" style={{ fontSize: 20 }}>{moonName(now)}</div>

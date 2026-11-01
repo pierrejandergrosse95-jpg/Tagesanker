@@ -140,7 +140,7 @@ export default function JournalScreen() {
     return [...m.entries()];
   }, [list]);
 
-  if (locked) return <div className="screen"><HubHero title={t('Mein Tagebuch')} scene={{ variant: 'night', seed: 43 }} /><PinLock hash={settings.journalPinHash!} onUnlock={() => force((x) => x + 1)} /></div>;
+  if (locked) return <div className="screen"><HubHero title={t('Mein Tagebuch')} image="journal" /><PinLock hash={settings.journalPinHash!} onUnlock={() => force((x) => x + 1)} /></div>;
 
   const prompt = promptOfDay(day);
   const lookback = entries.find((e) => e.date.slice(5) === day.slice(5) && e.date < day);
@@ -169,7 +169,7 @@ export default function JournalScreen() {
   if (!view || view === 'new') {
     return (
       <div className="screen">
-        <HubHero title={t('Mein Tagebuch')} scene={{ variant: 'night', seed: 43 }} emblem="book" />
+        <HubHero title={t('Mein Tagebuch')} image="journal" />
         <button className="parchment-card mb" style={{ width: '100%', textAlign: 'left' }} onClick={() => setEdit(newEntry(prompt))}>
           <div className="small muted">{t('Reflexionsfrage des Tages')}</div>
           <div className="serif" style={{ fontSize: 20, marginTop: 4 }}>{localPrompt(prompt)}</div>

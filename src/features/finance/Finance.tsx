@@ -291,7 +291,7 @@ export default function FinanceScreen() {
   if (!tab) {
     return (
       <div className="screen">
-        <HubHero title={t('Finanzen')} back={false} scene={{ variant: 'lanterns', lanterns: 8, seed: 21 }} emblem="chest"
+        <HubHero title={t('Finanzen')} back={false} image="finance"
           actions={<button className="icon-btn" aria-label={t('Ausgabe erfassen')} onClick={() => setEditEntry(newEntry('expense'))}><Plus size={24} /></button>} />
         <MonthSwitch month={month} setMonth={setMonth} />
         <div className="row" style={{ gap: 10, alignItems: 'stretch' }}>

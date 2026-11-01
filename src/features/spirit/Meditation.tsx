@@ -208,7 +208,7 @@ export default function MeditationScreen() {
 
   return (
     <div className="screen">
-      <HubHero title={t('Meditation & Achtsamkeit')} scene={{ variant: 'sunset', seed: 23 }} emblem="lotus" />
+      <HubHero title={t('Meditation & Achtsamkeit')} image="meditation" />
       <div className="stack">
         <div className="card">
           <div className="card-label row" style={{ gap: 6 }}><Timer size={14} /> {t('Dauer wählen')}</div>

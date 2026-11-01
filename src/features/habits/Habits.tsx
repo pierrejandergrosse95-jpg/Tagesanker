@@ -97,7 +97,7 @@ export default function HabitsScreen() {
 
   return (
     <div className="screen">
-      <HubHero title={t('Gewohnheiten & Routinen')} scene={{ variant: 'forest', seed: 9 }} emblem="sprout" actions={<button className="icon-btn" aria-label={t('Neue Gewohnheit')} onClick={() => setEdit(newHabit())}><Plus size={24} /></button>} />
+      <HubHero title={t('Gewohnheiten & Routinen')} image="habits" actions={<button className="icon-btn" aria-label={t('Neue Gewohnheit')} onClick={() => setEdit(newHabit())}><Plus size={24} /></button>} />
       <Segmented value={tab} onChange={setTab} options={[{ value: 'day', label: 'Tag' }, { value: 'stats', label: 'Statistik' }]} />
       {tab === 'day' && (
         <>

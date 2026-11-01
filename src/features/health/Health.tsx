@@ -171,7 +171,7 @@ export default function HealthScreen() {
   if (!tab) {
     return (
       <div className="screen">
-        <HubHero title={t('Medikamente & Gesundheit')} back={false} scene={{ variant: 'forest', seed: 9 }} emblem="potion"
+        <HubHero title={t('Medikamente & Gesundheit')} back={false} image="health"
           actions={<button className="icon-btn" aria-label={t('Medikament hinzufügen')} onClick={() => setEditMed(newMed())}><Plus size={24} /></button>} />
         {doses.length > 0 && (
           <button className="card tap row mb" onClick={() => nav('/health/today')}>

@@ -10,7 +10,7 @@ import { occurrencesBetween } from '../../core/recurrence';
 import { t, quote } from '../../i18n';
 import { MoonGlyph } from '../../ui/components';
 import { Emblem } from '../../ui/emblems';
-import { Scene } from '../../ui/scenes';
+import { areaImage } from '../../ui/hub';
 import { itemColor, useAgenda } from '../calendar/agenda';
 import { fmtMoney } from '../finance/logic';
 import { payBill } from '../finance/Finance';
@@ -38,16 +38,14 @@ function Hero({ onPlus }: { onPlus: () => void }) {
   const day = useToday();
   const settings = useSettings();
   return (
-    <section className="hero" style={{ height: 'calc(clamp(250px, 62vw, 330px) + var(--safe-top))' }}>
-      <Scene variant="lanterns" lanterns={14} castle seed={7} />
+    <section className="hero" style={{ height: 'calc(clamp(300px, 80vw, 420px) + var(--safe-top))' }}>
+      <img className="hero-img" src={areaImage('home')} alt="" />
       <div className="hero-content" style={{ alignItems: 'center' }}>
         <button className="icon-btn" aria-label={t('Bereiche')} onClick={() => nav('/areas')}><LayoutGrid size={22} /></button>
         <div className="grow center" style={{ fontFamily: 'var(--script)', fontSize: 22, color: '#f0d48e', textShadow: '0 2px 8px rgb(0 0 0 / .6)' }}>{t('Tagesanker')}</div>
         <button className="icon-btn" aria-label={t('Hinzufügen')} onClick={onPlus}><Plus size={22} /></button>
         <button className="icon-btn" aria-label={t('Einstellungen')} onClick={() => nav('/settings')}><Settings size={21} /></button>
       </div>
-      <Emblem name="owl" style={{ position: 'absolute', left: '3%', top: 'calc(var(--safe-top) + 58px)', width: 'clamp(70px, 20vw, 110px)', height: 'clamp(70px, 20vw, 110px)', zIndex: 1, filter: 'drop-shadow(0 6px 10px rgb(0 0 0 / .5))' }} />
-      <Emblem name="candle" style={{ position: 'absolute', right: '4%', top: 'calc(var(--safe-top) + 70px)', width: 'clamp(46px, 12vw, 70px)', height: 'clamp(46px, 12vw, 70px)', zIndex: 1 }} />
       <div style={{ position: 'absolute', left: 0, right: 0, bottom: 44, zIndex: 1, textAlign: 'center', color: '#f6e7bf', textShadow: '0 2px 10px rgb(0 0 0 / .8)' }}>
         <h1 style={{ color: '#f6e7bf', fontSize: 'clamp(21px, 6vw, 30px)' }}>{greeting()}{settings.name ? `, ${settings.name}` : ''} <span style={{ color: '#f0d48e' }}>✦</span></h1>
         <div className="serif" style={{ fontSize: 17 }}>{fmtLong(day)}</div>

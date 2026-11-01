@@ -89,7 +89,7 @@ export default function TarotScreen() {
   if (!tab) {
     return (
       <div className="screen">
-        <HubHero title={t('Tarot & Orakel')} scene={{ variant: 'lanterns', seed: 17 }} emblem="cards" />
+        <HubHero title={t('Tarot & Orakel')} image="tarot" />
         {todayCard && (
           <button className="card tap row mb" onClick={() => nav('/spirit/tarot/day')}>
             <img src={cardImage(todayCard.cards[0].card)} alt="" style={{ width: 38, aspectRatio: '240 / 660', objectFit: 'cover', borderRadius: 4, transform: todayCard.cards[0].reversed ? 'rotate(180deg)' : undefined }} />

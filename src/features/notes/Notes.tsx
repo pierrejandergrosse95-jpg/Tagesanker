@@ -77,7 +77,7 @@ export default function NotesScreen() {
     const mine = PERSONAL.reduce((s, c) => s + (counts.get(c) ?? 0), 0);
     return (
       <div className="screen">
-        <HubHero title={t('Notizen & Dokumente')} scene={{ variant: 'night', seed: 31 }} emblem="letter"
+        <HubHero title={t('Notizen & Dokumente')} image="notes"
           actions={<button className="icon-btn" aria-label={t('Neue Notiz')} onClick={() => void add()}><Plus size={24} /></button>} />
         <ScrollMenu items={[
           { key: 'mine', label: t('Meine Notizen'), icon: <StickyNote size={20} />, badge: mine || undefined, to: '/notes/c/mine' },

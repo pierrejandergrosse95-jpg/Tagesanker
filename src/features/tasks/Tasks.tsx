@@ -161,7 +161,7 @@ export default function TasksScreen() {
     const todayEvents = events.filter((e) => e.kind !== 'birthday' && occurrencesBetween(e.date, e.recurrence, day, day).length).length;
     return (
       <div className="screen">
-        <HubHero title={t('Aufgaben & Termine')} scene={{ variant: 'sunset', seed: 13 }} emblem="quill"
+        <HubHero title={t('Aufgaben & Termine')} image="tasks"
           actions={<button className="icon-btn" aria-label={t('Neue Aufgabe')} onClick={() => setEditing(blankTask())}><Plus size={24} /></button>} />
         <ScrollMenu items={[
           { key: 'day', label: t('Tagesaufgaben'), icon: <ListChecks size={20} />, badge: `(${count('day')})`, to: '/tasks/day' },
