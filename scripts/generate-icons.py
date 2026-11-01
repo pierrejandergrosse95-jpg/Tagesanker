@@ -10,7 +10,7 @@ SRC = ROOT / 'assets' / 'icon-original.png'
 RES = ROOT / 'android' / 'app' / 'src' / 'main' / 'res'
 PUBLIC = ROOT / 'public'
 BG = (240, 224, 202)          # Cremeton der Icon-Kachel
-SPLASH_BG = (244, 239, 228)   # App-Hintergrund (#F4EFE4)
+SPLASH_BG = (236, 224, 194)   # App-Hintergrund (#ECE0C2, Pergament)
 CROP = (122, 104, 1132, 1114)  # Innenfläche der Kachel ohne Schatten/Kante
 
 

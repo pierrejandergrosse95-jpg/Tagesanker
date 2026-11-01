@@ -1,5 +1,6 @@
 import type { Element } from '../core/astro/zodiac';
 import type { MoonPhaseKey } from '../core/astro/moon';
+import { lang } from '../i18n';
 
 export type ImpulseTopic =
   | 'Weisheit des Tages' | 'Loslassen' | 'Selbstliebe' | 'Innere Stärke' | 'Wachstum'
@@ -99,5 +100,105 @@ export const WEEKLY_IMPULSES: Record<Element, string[]> = {
     'Achte darauf, wessen Stimmungen du übernimmst. Nicht jede Welle gehört zu deinem Meer.',
     'Kreativer Ausdruck heilt: Male, schreibe, singe – ohne Ziel.',
     'Umgib dich mit Menschen, bei denen du ganz du selbst sein darfst.',
+  ],
+};
+
+/** Englische Fassung der Tagesimpulse (Schlüssel = id). */
+export const IMPULSES_EN: Record<string, { text: string; question: string }> = {
+  w1: { text: 'Everything that happens today brings you a little closer to what you truly need.', question: 'What surprised you today?' },
+  w2: { text: 'The river reaches the sea because it never stops flowing – not because it is fast.', question: 'Where may you be slower today?' },
+  w3: { text: 'What you sow today you do not have to harvest tomorrow. Some things need a whole moon cycle.', question: 'Which seed have you planted lately?' },
+  w4: { text: 'Silence is not emptiness. It is the space in which answers appear.', question: 'When were you truly still today?' },
+  w5: { text: 'You do not have to see the whole path. The next step is enough.', question: 'What is your next small step?' },
+  w6: { text: 'A tree grows in winter too – only beneath the earth.', question: 'What is growing invisibly within you right now?' },
+  l1: { text: 'Letting go does not mean giving up. It means freeing your hands for what wants to come.', question: 'What are you holding on to even though it no longer serves you?' },
+  l2: { text: 'Not every thought deserves to be followed. You may let it pass by like a cloud.', question: 'Which thought may move on today?' },
+  l3: { text: 'The full moon shows what is complete. Gratitude makes saying goodbye easier.', question: 'What are you grateful for, even as it ends?' },
+  l4: { text: 'You cannot change yesterday – but you can stop carrying it into today.', question: 'What would you like to lay down today?' },
+  l5: { text: 'Perfection is a piece of luggage you may put down at any time.', question: 'Where is “good enough” enough today?' },
+  l6: { text: 'Control gives security – trust gives freedom.', question: 'What may you leave to life today?' },
+  s1: { text: 'Speak to yourself today as you would to someone you love dearly.', question: 'What would you say to a good friend in your situation?' },
+  s2: { text: 'Your worth does not depend on your performance. You are valuable even on days when little succeeds.', question: 'What do you like about yourself, regardless of achievement?' },
+  s3: { text: 'Breaks are not a luxury. They are how you take yourself seriously.', question: 'Which break will you give yourself today?' },
+  s4: { text: 'Setting boundaries is an act of love – for yourself and for others.', question: 'Where would you like to say “no” more clearly?' },
+  s5: { text: 'Your body carries you every day. Thank it consciously today.', question: 'What does your body need right now?' },
+  s6: { text: 'You may give yourself the attention you are waiting for from others.', question: 'Which gesture of care will you give yourself today?' },
+  k1: { text: 'Strength is not never falling. Strength is getting up again gently.', question: 'When did you last get up again?' },
+  k2: { text: 'Within you there is a calm place no storm can reach. Breathe into it.', question: 'How does your calm place feel?' },
+  k3: { text: 'You have already managed so many days you would not have trusted yourself with.', question: 'Which challenge are you proud of?' },
+  k4: { text: 'Courage is not the absence of fear but the decision to go anyway.', question: 'What do you respect – and what is your brave step?' },
+  k5: { text: 'Your sensitivity is not a weakness. It is a fine antenna for life.', question: 'What did your sensitivity show you today?' },
+  k6: { text: 'Consistency beats intensity. Small steps every day build mountains.', question: 'Which small habit carries you?' },
+  g1: { text: 'Growth often feels like discomfort. It is the sign that something new is getting space.', question: 'Where do you feel growing pains right now?' },
+  g2: { text: 'The new moon is a blank page. What would you like to write on it over the coming weeks?', question: 'Which intention do you set for this cycle?' },
+  g3: { text: 'Compare yourself only with the person you were yesterday.', question: 'What can you do better today than a year ago?' },
+  g4: { text: 'Mistakes are signposts, not verdicts.', question: 'What did a mistake teach you recently?' },
+  g5: { text: 'Curiosity is the beginning of every change. Ask “why?” once more today.', question: 'What would you like to learn more about?' },
+  g6: { text: 'The waxing moon gives tailwind to everything you want to build.', question: 'What would you like to nourish and strengthen now?' },
+  a1: { text: 'Feel your breath for five breaths. Nothing more is needed today.', question: 'How does your breath feel right now?' },
+  a2: { text: 'The present moment is the only one in which you can truly live.', question: 'What do you perceive right now with all your senses?' },
+  a3: { text: 'Eat one meal mindfully today – without a screen, with all your senses.', question: 'What did you taste that usually escapes you?' },
+  a4: { text: 'Feelings are visitors. Greet them, listen to them and let them go again.', question: 'Which feeling visited you today?' },
+  a5: { text: 'A walk without a destination is a conversation with yourself.', question: 'What did you notice outside today?' },
+  a6: { text: 'Between stimulus and response there is a space. In that space lies your freedom.', question: 'Where did you pause today before reacting?' },
+  v1: { text: 'Trust the path, even if you cannot quite see it right now.', question: 'What gives you support right now?' },
+  v2: { text: 'What is meant for you will find you – often by detours.', question: 'Which detour turned out to be right in hindsight?' },
+  v3: { text: 'Your intuition speaks quietly. Give it a moment of attention today.', question: 'What does your gut feeling say about an open question?' },
+  v4: { text: 'Even after the darkest night the light returns – as surely as the moon waxes again.', question: 'What carried you through difficult times?' },
+  v5: { text: 'You are not too late and not too early. You are in your own rhythm.', question: 'Where may you free yourself from other people’s schedules?' },
+  c1: { text: 'Change is the only constant. Whoever dances with it instead of fighting it stays light.', question: 'Which change would you like to welcome today?' },
+  c2: { text: 'Every ending is also a beginning that is still hiding.', question: 'Which beginning could be hiding behind an ending?' },
+  c3: { text: 'You do not have to change everything at once. One habit is enough.', question: 'Which one thing would you like to do differently?' },
+  c4: { text: 'Like the moon, you may have phases too. Not every day has to be full.', question: 'Which phase are you in right now?' },
+  c5: { text: 'The caterpillar knows nothing of the butterfly. It trusts the process.', question: 'Which process in your life may you give time?' },
+  i1: { text: 'The child within you wants to be seen. What would it have liked to play today?', question: 'What brought you great joy as a child?' },
+  i2: { text: 'Tell your younger self today: “You were enough. You are enough.”', question: 'What would you have needed to hear as a child?' },
+  i3: { text: 'Playful moments heal. Allow yourself something unreasonable that brings joy today.', question: 'Which little silliness will you treat yourself to?' },
+  i4: { text: 'When a reaction is bigger than its cause, an old wound is often speaking. Meet it with warmth.', question: 'Which old experience is making itself felt right now?' },
+  i5: { text: 'Wonder is an ability that is never lost. Find something today that makes you marvel.', question: 'What made you marvel today?' },
+  b1: { text: '“I have to manage everything alone” is a belief, not a law of nature.', question: 'Where could you ask for support?' },
+  b2: { text: 'Examine a thought today: is it really true? Can you know it with absolute certainty?', question: 'Which thought about yourself deserves a review?' },
+  b3: { text: 'What you believe about yourself shapes what you dare. Choose a kinder sentence today.', question: 'Which new sentence would you like to believe about yourself?' },
+  b4: { text: '“I may only rest when everything is done” – everything will never be done. Rest anyway.', question: 'When will you allow yourself rest today?' },
+  b5: { text: 'The voice that criticises you wants to protect you. Thank it – and decide for yourself anyway.', question: 'What does your inner critic want to protect you from?' },
+  b6: { text: 'You are not your thoughts. You are the one who notices them.', question: 'Which thought keeps coming back?' },
+};
+
+const TOPICS_EN: Record<ImpulseTopic, string> = {
+  'Weisheit des Tages': 'Wisdom of the day', Loslassen: 'Letting go', Selbstliebe: 'Self-love', 'Innere Stärke': 'Inner strength',
+  Wachstum: 'Growth', Achtsamkeit: 'Mindfulness', Vertrauen: 'Trust', Veränderung: 'Change', 'Inneres Kind': 'Inner child', Glaubenssätze: 'Beliefs',
+};
+
+/** Impuls in der aktuellen Sprache. */
+export function localImpulse(i: Impulse): Impulse {
+  if (lang() !== 'en') return i;
+  return { ...i, ...IMPULSES_EN[i.id] };
+}
+export const topicName = (t: ImpulseTopic) => (lang() === 'en' ? TOPICS_EN[t] : t);
+
+export const WEEKLY_IMPULSES_EN: Record<Element, string[]> = {
+  Feuer: [
+    'This week invites you to use your energy purposefully: choose a project close to your heart and give it your best time.',
+    'Your inner fire needs wood too: consciously plan moments of rest so the flame burns calmly.',
+    'This week courage shows in small things – in an honest conversation or a first step.',
+    'Share your enthusiasm. Whoever warms others is warmed themselves.',
+  ],
+  Erde: [
+    'This week is about grounding: bring order to an area of your life that has been on your mind for a while.',
+    'Enjoy pleasures without justification – good food, nature, a warm bath.',
+    'Consistency is your superpower. Stick with a good habit, even when nobody is watching.',
+    'Check what you are carrying that is not yours. Responsibility may be shared.',
+  ],
+  Luft: [
+    'This week brings encounters and conversations. Listen as attentively as you speak.',
+    'Your thoughts fly fast – write down the most important ones so they can land.',
+    'Allow yourself phases without input: no phone, no news, only your own thoughts.',
+    'A new idea wants to be tried out. Plan a small test.',
+  ],
+  Wasser: [
+    'This week invites you to give your feelings space. Write three sentences in your journal each evening.',
+    'Notice whose moods you take on. Not every wave belongs to your sea.',
+    'Creative expression heals: paint, write, sing – without a goal.',
+    'Surround yourself with people with whom you may be entirely yourself.',
   ],
 };

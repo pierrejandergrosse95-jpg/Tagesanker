@@ -1,3 +1,4 @@
+import { lang, t } from '../i18n';
 import type { HM, ISODate } from './types';
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -95,48 +96,64 @@ export function atTime(date: ISODate, time: HM): Date {
   return d;
 }
 
-export const WEEKDAYS_SHORT = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-export const WEEKDAYS_LONG = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
-export const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-export const MONTHS_SHORT = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+const WD_SHORT = { de: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'], en: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] };
+const WD_LONG = {
+  de: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+  en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+};
+const MON = {
+  de: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+  en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+};
+const MON_SHORT = {
+  de: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+};
+
+export const weekdaysShort = () => WD_SHORT[lang()];
+export const weekdaysLong = () => WD_LONG[lang()];
+export const monthNames = () => MON[lang()];
+export const monthNamesShort = () => MON_SHORT[lang()];
 
 export function fmtLong(s: ISODate): string {
   const d = fromISO(s);
-  return `${WEEKDAYS_LONG[d.getDay()]}, ${d.getDate()}. ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+  if (lang() === 'en') return `${weekdaysLong()[d.getDay()]}, ${d.getDate()} ${monthNames()[d.getMonth()]} ${d.getFullYear()}`;
+  return `${weekdaysLong()[d.getDay()]}, ${d.getDate()}. ${monthNames()[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 export function fmtShort(s: ISODate): string {
   const d = fromISO(s);
+  if (lang() === 'en') return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
   return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`;
 }
 
 export function fmtDayMonth(s: ISODate): string {
   const d = fromISO(s);
-  return `${d.getDate()}. ${MONTHS[d.getMonth()]}`;
+  return lang() === 'en' ? `${d.getDate()} ${monthNames()[d.getMonth()]}` : `${d.getDate()}. ${monthNames()[d.getMonth()]}`;
 }
 
 export function fmtMonthYear(s: ISODate): string {
   const d = fromISO(s);
-  return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+  return `${monthNames()[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 /** "Heute", "Morgen", "in 3 Tagen", "vor 2 Tagen" */
 export function relDay(s: ISODate, ref: ISODate = today()): string {
   const n = diffDays(ref, s);
-  if (n === 0) return 'Heute';
-  if (n === 1) return 'Morgen';
-  if (n === -1) return 'Gestern';
-  if (n > 1) return `in ${n} Tagen`;
-  return `vor ${-n} Tagen`;
+  if (n === 0) return t('Heute');
+  if (n === 1) return t('Morgen');
+  if (n === -1) return t('Gestern');
+  if (n > 1) return t('in {n} Tagen', { n });
+  return t('vor {n} Tagen', { n: -n });
 }
 
 export function greeting(d = new Date()): string {
   const h = d.getHours();
-  if (h < 5) return 'Gute Nacht';
-  if (h < 11) return 'Guten Morgen';
-  if (h < 17) return 'Guten Tag';
-  if (h < 22) return 'Guten Abend';
-  return 'Gute Nacht';
+  if (h < 5) return t('Gute Nacht');
+  if (h < 11) return t('Guten Morgen');
+  if (h < 17) return t('Guten Tag');
+  if (h < 22) return t('Guten Abend');
+  return t('Gute Nacht');
 }
 
 export function nowHM(): HM {

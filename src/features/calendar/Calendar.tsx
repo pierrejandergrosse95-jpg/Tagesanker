@@ -1,15 +1,17 @@
+import { t } from '../../i18n';
 import { Cake, ChevronLeft, ChevronRight, Moon, Plus, Receipt, Stethoscope, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   addDays, addMonths, daysInRange, endOfMonth, fmtLong, fmtMonthYear, fromISO, hmToMin, isoWeek,
-  startOfMonth, startOfWeek, WEEKDAYS_SHORT,
+  startOfMonth, startOfWeek, weekdaysShort,
 } from '../../core/dates';
 import { db } from '../../core/db';
 import { useToday } from '../../core/hooks';
 import { NO_REPEAT } from '../../core/recurrence';
 import type { CalEvent, EventKind, ISODate, Task } from '../../core/types';
-import { Empty, Field, RecurrencePicker, Segmented, Sheet, TopBar, useUi } from '../../ui/components';
+import { HubHero } from '../../ui/hub';
+import { Empty, Field, RecurrencePicker, Segmented, Sheet, useUi } from '../../ui/components';
 import { fmtMoney } from '../finance/logic';
 import { TaskEditor, toggleTask } from '../tasks/Tasks';
 import { itemColor, useAgenda, type AgendaItem } from './agenda';
@@ -33,16 +35,16 @@ export function EventEditor({ event, onClose }: { event: CalEvent | null; onClos
     onClose();
   };
   const remove = async () => {
-    if (e.id && (await confirm(`${KIND_LABEL[e.kind]} löschen?`, { ok: 'Löschen', danger: true }))) {
+    if (e.id && (await confirm(t('{k} löschen?', { k: t(KIND_LABEL[e.kind]) }), { ok: 'Löschen', danger: true }))) {
       await db.events.delete(e.id);
       onClose();
     }
   };
   const isBday = e.kind === 'birthday';
   return (
-    <Sheet open onClose={onClose} title={e.id ? `${KIND_LABEL[e.kind]} bearbeiten` : `Neuer ${KIND_LABEL[e.kind]}`} actions={<>
-      {e.id && <button className="btn danger" onClick={remove} aria-label="Löschen"><Trash2 size={18} /></button>}
-      <button className="btn" onClick={save} disabled={!e.title.trim()}>Speichern</button>
+    <Sheet open onClose={onClose} title={e.id ? t('{k} bearbeiten', { k: t(KIND_LABEL[e.kind]) }) : t('Neu: {k}', { k: t(KIND_LABEL[e.kind]) })} actions={<>
+      {e.id && <button className="btn danger" onClick={remove} aria-label={t('Löschen')}><Trash2 size={18} /></button>}
+      <button className="btn" onClick={save} disabled={!e.title.trim()}>{t('Speichern')}</button>
     </>}>
       <div className="form">
         <Segmented value={e.kind} onChange={(kind) => set({ kind })} options={[{ value: 'appointment', label: 'Termin' }, { value: 'doctor', label: 'Arzt' }, { value: 'birthday', label: 'Geburtstag' }]} />
@@ -58,7 +60,7 @@ export function EventEditor({ event, onClose }: { event: CalEvent | null; onClos
             <Field label="Wiederholung"><RecurrencePicker value={e.recurrence} onChange={(recurrence) => set({ recurrence })} /></Field>
             <Field label="Erinnerung">
               <select className="select" value={e.remindMin ?? 30} onChange={(ev) => set({ remindMin: Number(ev.target.value) })}>
-                {[0, 10, 30, 60, 120, 1440].map((m) => <option key={m} value={m}>{m === 0 ? 'Zum Termin' : m < 60 ? `${m} Minuten vorher` : m === 1440 ? '1 Tag vorher' : `${m / 60} Stunde(n) vorher`}</option>)}
+                {[0, 10, 30, 60, 120, 1440].map((m) => <option key={m} value={m}>{m === 0 ? t('Zum Termin') : m < 60 ? t('{n} Minuten vorher', { n: m }) : m === 1440 ? t('1 Tag vorher') : t('{n} Stunde(n) vorher', { n: m / 60 })}</option>)}
               </select>
             </Field>
           </>
@@ -80,8 +82,8 @@ function ItemRow({ it, onEvent, onTask }: { it: AgendaItem; onEvent: (e: CalEven
         <button className="list-item" onClick={() => onEvent(e)}>
           <span className="bar-accent" style={{ background: color }} />
           <div className="grow">
-            <div className="title row" style={{ gap: 6 }}>{Icon && <Icon size={15} />}{e.kind === 'birthday' ? `${e.title} – Geburtstag` : e.title}</div>
-            <div className="meta">{e.time ? `${e.time}${e.endTime ? ` – ${e.endTime}` : ''} Uhr` : 'Ganztägig'}{e.location ? ` · ${e.location}` : ''}</div>
+            <div className="title row" style={{ gap: 6 }}>{Icon && <Icon size={15} />}{e.kind === 'birthday' ? `${e.title} – ${t('Geburtstag')}` : e.title}</div>
+            <div className="meta">{e.time ? `${e.time}${e.endTime ? ` – ${e.endTime}` : ''} ${t('Uhr')}` : t('Ganztägig')}{e.location ? ` · ${e.location}` : ''}</div>
           </div>
         </button>
       );
@@ -91,24 +93,24 @@ function ItemRow({ it, onEvent, onTask }: { it: AgendaItem; onEvent: (e: CalEven
         <button className="list-item" onClick={() => nav('/shifts')}>
           <span className="bar-accent" style={{ background: color }} />
           <div className="grow">
-            <div className="title">{it.type.name}</div>
-            <div className="meta">{it.type.kind === 'work' ? `${it.shift.start ?? it.type.start} – ${it.shift.end ?? it.type.end} Uhr` : 'Ganztägig'}</div>
+            <div className="title">{t(it.type.name)}</div>
+            <div className="meta">{it.type.kind === 'work' ? `${it.shift.start ?? it.type.start} – ${it.shift.end ?? it.type.end} ${t('Uhr')}` : t('Ganztägig')}</div>
           </div>
         </button>
       );
     case 'task':
       return (
         <div className={`list-item ${it.task.done ? 'done' : ''}`}>
-          <button className={`check ${it.task.done ? 'on' : ''}`} aria-label="Erledigt" onClick={() => void toggleTask(it.task)} style={{ width: 22, height: 22 }} />
+          <button className={`check ${it.task.done ? 'on' : ''}`} aria-label={t('Erledigt')} onClick={() => void toggleTask(it.task)} style={{ width: 22, height: 22 }} />
           <button className="grow" style={{ background: 'none', border: 0, textAlign: 'left', padding: 0 }} onClick={() => onTask(it.task)}>
             <div className="title">{it.task.title}</div>
-            <div className="meta">Aufgabe{it.task.time ? ` · ${it.task.time} Uhr` : ''}</div>
+            <div className="meta">{t('Aufgabe')}{it.task.time ? ` · ${it.task.time} ${t('Uhr')}` : ''}</div>
           </button>
         </div>
       );
     case 'bill':
       return (
-        <button className="list-item" onClick={() => nav('/finance?tab=bills')}>
+        <button className="list-item" onClick={() => nav('/finance/bills')}>
           <Receipt size={18} color={color} />
           <div className="grow">
             <div className="title">{it.bill.title}</div>
@@ -120,7 +122,7 @@ function ItemRow({ it, onEvent, onTask }: { it: AgendaItem; onEvent: (e: CalEven
       return (
         <button className="list-item" onClick={() => nav('/spirit/moon')}>
           <Moon size={18} color={color} />
-          <div className="grow"><div className="title">{it.label}</div></div>
+          <div className="grow"><div className="title">{t(it.label)}</div></div>
         </button>
       );
   }
@@ -198,19 +200,19 @@ export default function CalendarScreen() {
 
   return (
     <div className="screen">
-      <TopBar title="Kalender" actions={<button className="icon-btn filled" aria-label="Neuer Termin" onClick={() => setEditEvent(blankEvent(selected))}><Plus size={22} /></button>} />
+      <HubHero compact back={false} title={t('Kalender')} image="calendar" actions={<button className="icon-btn" aria-label={t('Neuer Termin')} onClick={() => setEditEvent(blankEvent(selected))}><Plus size={24} /></button>} />
       <Segmented value={view} onChange={setView} options={[{ value: 'month', label: 'Monat' }, { value: 'week', label: 'Woche' }, { value: 'day', label: 'Tag' }]} />
       <div className="row between mb">
-        <button className="icon-btn" aria-label="Zurück" onClick={() => shiftBy(-1)}><ChevronLeft /></button>
+        <button className="icon-btn" aria-label={t('Zurück')} onClick={() => shiftBy(-1)}><ChevronLeft /></button>
         <button className="serif" style={{ background: 'none', border: 0, fontSize: 18 }} onClick={() => { setSelected(day); setCursor(startOfMonth(day)); }}>{title}</button>
-        <button className="icon-btn" aria-label="Weiter" onClick={() => shiftBy(1)}><ChevronRight /></button>
+        <button className="icon-btn" aria-label={t('Weiter')} onClick={() => shiftBy(1)}><ChevronRight /></button>
       </div>
 
       {view === 'month' && (
         <>
           <div className="card" style={{ padding: 10 }}>
             <div className="cal-grid">
-              {[1, 2, 3, 4, 5, 6, 0].map((d) => <div key={d} className="cal-head">{WEEKDAYS_SHORT[d]}</div>)}
+              {[1, 2, 3, 4, 5, 6, 0].map((d) => <div key={d} className="cal-head">{weekdaysShort()[d]}</div>)}
               {days.map((d) => {
                 const items = agenda?.get(d) ?? [];
                 const shift = items.find((i) => i.kind === 'shift');
@@ -218,7 +220,7 @@ export default function CalendarScreen() {
                 return (
                   <button key={d} className={`cal-cell ${d.slice(0, 7) !== cursor.slice(0, 7) ? 'other' : ''} ${d === day ? 'today' : ''} ${d === selected ? 'selected' : ''}`} onClick={() => setSelected(d)} aria-label={fmtLong(d)}>
                     <span className="num">{fromISO(d).getDate()}</span>
-                    {shift && shift.kind === 'shift' && <span className="shift-pill" style={{ background: shift.type.color, color: '#fff' }}>{shift.type.short}</span>}
+                    {shift && shift.kind === 'shift' && <span className="shift-pill" style={{ background: shift.type.color, color: '#fff' }}>{t(shift.type.short)}</span>}
                     <span className="cal-dots">{dots.map((it, i) => <i key={i} style={{ background: itemColor(it) }} />)}</span>
                   </button>
                 );
@@ -246,7 +248,7 @@ export default function CalendarScreen() {
           <div className="week-strip">
             {daysInRange(weekStart, addDays(weekStart, 6)).map((d) => (
               <button key={d} className={`${d === selected ? 'active' : ''} ${d === day ? 'today' : ''}`} onClick={() => setSelected(d)}>
-                {WEEKDAYS_SHORT[fromISO(d).getDay()]}
+                {weekdaysShort()[fromISO(d).getDay()]}
                 <span className="n">{fromISO(d).getDate()}</span>
               </button>
             ))}

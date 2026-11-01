@@ -9,6 +9,8 @@ Meditation, Tagesimpulse, Tarot, Tagebuch).
 
 - **Offline & privat:** Alle Daten liegen nur auf dem Gerät (IndexedDB). Kein Konto, keine Cloud, keine Tracker.
 - **Android zuerst:** Native App über Capacitor, mit echten System-Erinnerungen. iOS und Web sind ohne Neuentwicklung möglich.
+- **Deutsch & Englisch:** Sprache automatisch nach Gerät oder wählbar.
+- **Jedes Display:** Handy (Hoch-/Querformat) und Tablet, heller und dunkler Modus.
 - **Konzept:** Architektur, Datenmodell, Design und Ausbaustufen stehen in [`docs/KONZEPT.md`](docs/KONZEPT.md).
 
 ## Funktionsumfang
@@ -62,6 +64,22 @@ Splash-Screens und Web-Icons werden daraus erzeugt:
 
 ```bash
 python3 scripts/generate-icons.py   # benötigt Pillow
+```
+
+### Bereichsbilder
+
+Die Kopf- und Kachelbilder der Bereiche werden aus `assets/areas-original.png` zugeschnitten:
+
+```bash
+python3 scripts/generate-areas.py
+```
+
+### Tarot-Karten
+
+Die Kartenbilder werden aus `assets/tarot-original.png` zugeschnitten (nur das Motiv; Nummer und Name setzt die App):
+
+```bash
+python3 scripts/generate-tarot.py
 ```
 
 ## Projektstruktur

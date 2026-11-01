@@ -1,6 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { addDays, atTime, today } from './dates';
+import { t as tr } from '../i18n';
 import { db } from './db';
 import { occurrencesBetween } from './recurrence';
 import type { NotifyCategory, Settings } from './types';
@@ -57,7 +58,7 @@ export async function collectReminders(settings: Settings, from = new Date()): P
       if (!t || t.kind !== 'work') continue;
       const begin = s.start ?? t.start;
       const at = new Date(atTime(s.date, begin).getTime() - settings.notifyTimes.shiftLeadMin * 60000);
-      out.push({ key: `shift-${s.id}`, category: 'shifts', title: `${t.name} um ${begin} Uhr`, body: `Deine Schicht beginnt in ${settings.notifyTimes.shiftLeadMin} Minuten.`, at, route: '/shifts' });
+      out.push({ key: `shift-${s.id}`, category: 'shifts', title: tr('{s} um {h} Uhr', { s: tr(t.name), h: begin }), body: tr('Deine Schicht beginnt in {n} Minuten.', { n: settings.notifyTimes.shiftLeadMin }), at, route: '/shifts' });
     }
   }
 
@@ -66,7 +67,7 @@ export async function collectReminders(settings: Settings, from = new Date()): P
     for (const m of meds) {
       for (const d of occurrencesBetween(m.startDate, m.recurrence, start, end)) {
         for (const t of m.times) {
-          out.push({ key: `med-${m.id}-${d}-${t}`, category: 'meds', title: `${m.name} einnehmen`, body: [m.dose, m.instructions].filter(Boolean).join(' · '), at: atTime(d, t), route: '/health' });
+          out.push({ key: `med-${m.id}-${d}-${t}`, category: 'meds', title: tr('{m} einnehmen', { m: m.name }), body: [m.dose, m.instructions].filter(Boolean).join(' · '), at: atTime(d, t), route: '/health' });
         }
       }
     }
@@ -76,14 +77,14 @@ export async function collectReminders(settings: Settings, from = new Date()): P
     const bills = await db.bills.filter((b) => !b.paidAt).toArray();
     for (const b of bills) {
       const day = addDays(b.due, -b.remindDays);
-      out.push({ key: `bill-${b.id}`, category: 'bills', title: `Zahlung fällig: ${b.title}`, body: b.remindDays ? `Fällig in ${b.remindDays} Tagen (${b.due.split('-').reverse().join('.')}).` : 'Heute fällig.', at: atTime(day, '09:00'), route: '/finance' });
+      out.push({ key: `bill-${b.id}`, category: 'bills', title: tr('Zahlung fällig: {b}', { b: b.title }), body: b.remindDays ? tr('Fällig in {n} Tagen ({d}).', { n: b.remindDays, d: b.due.split('-').reverse().join('.') }) : tr('Heute fällig.'), at: atTime(day, '09:00'), route: '/finance' });
     }
   }
 
   if (n.tasks) {
     const tasks = await db.tasks.filter((t) => !t.done && t.remind && !!t.due).toArray();
     for (const t of tasks) {
-      out.push({ key: `task-${t.id}`, category: 'tasks', title: t.title, body: 'Aufgabe fällig', at: atTime(t.due!, t.time ?? settings.notifyTimes.taskTime), route: '/tasks' });
+      out.push({ key: `task-${t.id}`, category: 'tasks', title: t.title, body: tr('Aufgabe fällig'), at: atTime(t.due!, t.time ?? settings.notifyTimes.taskTime), route: '/tasks' });
     }
   }
 
@@ -94,12 +95,12 @@ export async function collectReminders(settings: Settings, from = new Date()): P
       if (isBirthday ? !n.birthdays : !n.events) continue;
       for (const d of occurrencesBetween(e.date, isBirthday ? { freq: 'yearly' } : e.recurrence, start, end)) {
         if (isBirthday) {
-          out.push({ key: `bday-${e.id}-${d}`, category: 'birthdays', title: `🎂 ${e.title} hat Geburtstag`, body: 'Denk an einen lieben Gruß.', at: atTime(d, '08:00'), route: '/calendar' });
+          out.push({ key: `bday-${e.id}-${d}`, category: 'birthdays', title: tr('🎂 {n} hat Geburtstag', { n: e.title }), body: tr('Denk an einen lieben Gruß.'), at: atTime(d, '08:00'), route: '/calendar' });
         } else if (e.time) {
           const lead = e.remindMin ?? 30;
-          out.push({ key: `event-${e.id}-${d}`, category: 'events', title: e.title, body: `${e.time} Uhr${e.location ? ' · ' + e.location : ''}`, at: new Date(atTime(d, e.time).getTime() - lead * 60000), route: '/calendar' });
+          out.push({ key: `event-${e.id}-${d}`, category: 'events', title: e.title, body: `${e.time} ${tr('Uhr')}${e.location ? ' · ' + e.location : ''}`, at: new Date(atTime(d, e.time).getTime() - lead * 60000), route: '/calendar' });
         } else {
-          out.push({ key: `event-${e.id}-${d}`, category: 'events', title: e.title, body: 'Heute', at: atTime(d, '08:00'), route: '/calendar' });
+          out.push({ key: `event-${e.id}-${d}`, category: 'events', title: e.title, body: tr('Heute'), at: atTime(d, '08:00'), route: '/calendar' });
         }
       }
     }
@@ -109,14 +110,14 @@ export async function collectReminders(settings: Settings, from = new Date()): P
     const habits = await db.habits.filter((h) => !h.archived && !!h.remindTime).toArray();
     for (const h of habits) for (let i = 0; i <= WINDOW_DAYS; i++) {
       const d = addDays(start, i);
-      out.push({ key: `habit-${h.id}-${d}`, category: 'habits', title: h.name, body: `Ziel heute: ${h.target} ${h.unit}`, at: atTime(d, h.remindTime!), route: '/habits' });
+      out.push({ key: `habit-${h.id}-${d}`, category: 'habits', title: tr(h.name), body: tr('Ziel heute: {n} {u}', { n: h.target, u: tr(h.unit) }), at: atTime(d, h.remindTime!), route: '/habits' });
     }
   }
 
   for (let i = 0; i <= WINDOW_DAYS; i++) {
     const d = addDays(start, i);
-    if (n.impulse) out.push({ key: `impulse-${d}`, category: 'impulse', title: 'Dein Tagesimpuls ✨', body: 'Ein neuer Gedanke für deinen Tag wartet auf dich.', at: atTime(d, settings.notifyTimes.impulse), route: '/spirit' });
-    if (n.meditation) out.push({ key: `meditation-${d}`, category: 'meditation', title: 'Zeit für einen Moment Ruhe', body: 'Ein paar Minuten Meditation tun dir gut.', at: atTime(d, settings.notifyTimes.meditation), route: '/spirit/meditation' });
+    if (n.impulse) out.push({ key: `impulse-${d}`, category: 'impulse', title: tr('Dein Tagesimpuls ✨'), body: tr('Ein neuer Gedanke für deinen Tag wartet auf dich.'), at: atTime(d, settings.notifyTimes.impulse), route: '/spirit' });
+    if (n.meditation) out.push({ key: `meditation-${d}`, category: 'meditation', title: tr('Zeit für einen Moment Ruhe'), body: tr('Ein paar Minuten Meditation tun dir gut.'), at: atTime(d, settings.notifyTimes.meditation), route: '/spirit/meditation' });
   }
 
   return out.filter((r) => r.at > from).sort((a, b) => a.at.getTime() - b.at.getTime());
@@ -164,7 +165,7 @@ export async function rescheduleAll(): Promise<number> {
 export async function initNotifications(navigate: (route: string) => void): Promise<void> {
   if (!isNative()) return;
   try {
-    await LocalNotifications.createChannel({ id: 'tagesanker', name: 'Erinnerungen', description: 'Erinnerungen von Tagesanker', importance: 4, visibility: 0 });
+    await LocalNotifications.createChannel({ id: 'tagesanker', name: tr('Erinnerungen'), description: tr('Erinnerungen von Tagesanker'), importance: 4, visibility: 0 });
   } catch {
     /* ältere Android-Versionen ohne Kanäle */
   }

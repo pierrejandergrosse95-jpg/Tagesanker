@@ -1,5 +1,7 @@
 import { addDays, addMonths, diffDays, fromISO, weekday } from './dates';
 import type { ISODate, Recurrence } from './types';
+import { t } from '../i18n';
+import { weekdaysShort } from './dates';
 
 export const NO_REPEAT: Recurrence = { freq: 'none' };
 
@@ -73,17 +75,17 @@ export function occurrencesBetween(start: ISODate, rule: Recurrence, from: ISODa
 }
 
 export function describeRecurrence(rule: Recurrence): string {
-  const names = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+  const names = weekdaysShort();
   switch (rule.freq) {
-    case 'none': return 'Einmalig';
-    case 'daily': return 'Täglich';
-    case 'weekly': return 'Wöchentlich';
-    case 'monthly': return 'Monatlich';
-    case 'yearly': return 'Jährlich';
-    case 'interval': return `Alle ${rule.every ?? 1} Tage`;
+    case 'none': return t('Einmalig');
+    case 'daily': return t('Täglich');
+    case 'weekly': return t('Wöchentlich');
+    case 'monthly': return t('Monatlich');
+    case 'yearly': return t('Jährlich');
+    case 'interval': return t('Alle {n} Tage', { n: rule.every ?? 1 });
     case 'weekdays': {
       const w = [...(rule.weekdays ?? [])].sort((a, b) => ((a + 6) % 7) - ((b + 6) % 7));
-      return w.length ? w.map((i) => names[i]).join(', ') : 'Keine Tage';
+      return w.length ? w.map((i) => names[i]).join(', ') : t('Keine Tage');
     }
   }
 }

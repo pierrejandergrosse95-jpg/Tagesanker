@@ -1,3 +1,4 @@
+import { t, t as tr } from '../../i18n';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { BookHeart, CalendarDays, CheckSquare, HeartPulse, Pill, Receipt, Search, StickyNote, Target, Wallet } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
@@ -31,15 +32,15 @@ export default function SearchScreen() {
       db.finance.toArray(), db.healthNotes.toArray(), db.habits.toArray(), settings.journalPinHash ? Promise.resolve([]) : db.journal.toArray(),
     ]);
     const out: Hit[] = [];
-    for (const t of tasks) if (has(query, t.title, t.note, t.category)) out.push({ key: `t${t.id}`, icon: <CheckSquare size={18} />, title: t.title, meta: `Aufgabe${t.done ? ' · erledigt' : ''}${t.due ? ' · ' + fmtShort(t.due) : ''}`, to: '/tasks' });
-    for (const e of events) if (has(query, e.title, e.note, e.location)) out.push({ key: `e${e.id}`, icon: <CalendarDays size={18} />, title: e.title, meta: `${e.kind === 'birthday' ? 'Geburtstag' : e.kind === 'doctor' ? 'Arzttermin' : 'Termin'} · ${fmtShort(e.date)}`, to: '/calendar' });
-    for (const n of notes) if (has(query, n.title, n.body, n.category, ...(n.checklist ?? []).map((c) => c.text), ...(n.attachments ?? []).map((a) => a.name))) out.push({ key: `n${n.id}`, icon: <StickyNote size={18} />, title: n.title || 'Ohne Titel', meta: `Notiz · ${n.category}`, to: `/notes/${n.id}` });
-    for (const m of meds) if (has(query, m.name, m.dose, m.instructions)) out.push({ key: `m${m.id}`, icon: <Pill size={18} />, title: m.name, meta: `Medikament · ${m.dose}`, to: '/health?tab=meds' });
-    for (const b of bills) if (has(query, b.title, b.note, b.category)) out.push({ key: `b${b.id}`, icon: <Receipt size={18} />, title: b.title, meta: `Zahlung · ${fmtMoney(b.amount)} · ${b.paidAt ? 'bezahlt' : 'fällig ' + fmtShort(b.due)}`, to: '/finance?tab=bills' });
-    for (const f of finance) if (has(query, f.title, f.note, f.category)) out.push({ key: `f${f.id}`, icon: <Wallet size={18} />, title: f.title, meta: `${f.kind === 'income' ? 'Einnahme' : 'Ausgabe'} · ${fmtMoney(f.amount)} · ${fmtShort(f.date)}`, to: '/finance?tab=entries' });
-    for (const h of healthNotes) if (has(query, h.title, h.text)) out.push({ key: `h${h.id}`, icon: <HeartPulse size={18} />, title: h.title, meta: `Gesundheitsnotiz · ${fmtShort(h.date)}`, to: '/health' });
-    for (const h of habits) if (has(query, h.name)) out.push({ key: `g${h.id}`, icon: <Target size={18} />, title: h.name, meta: 'Gewohnheit', to: '/habits' });
-    for (const j of journal) if (has(query, j.text, j.answer, j.prompt, ...j.gratitude)) out.push({ key: `j${j.id}`, icon: <BookHeart size={18} />, title: j.prompt ?? 'Tagebucheintrag', meta: `Tagebuch · ${fmtShort(j.date)}`, to: '/spirit/journal' });
+    for (const t of tasks) if (has(query, t.title, t.note, t.category)) out.push({ key: `t${t.id}`, icon: <CheckSquare size={18} />, title: t.title, meta: `${tr('Aufgabe')}${t.done ? ' · ' + tr('erledigt') : ''}${t.due ? ' · ' + fmtShort(t.due) : ''}`, to: '/tasks' });
+    for (const e of events) if (has(query, e.title, e.note, e.location)) out.push({ key: `e${e.id}`, icon: <CalendarDays size={18} />, title: e.title, meta: `${tr(e.kind === 'birthday' ? 'Geburtstag' : e.kind === 'doctor' ? 'Arzttermin' : 'Termin')} · ${fmtShort(e.date)}`, to: '/calendar' });
+    for (const n of notes) if (has(query, n.title, n.body, n.category, ...(n.checklist ?? []).map((c) => c.text), ...(n.attachments ?? []).map((a) => a.name))) out.push({ key: `n${n.id}`, icon: <StickyNote size={18} />, title: n.title || tr('Ohne Titel'), meta: `${tr('Notiz')} · ${tr(n.category)}`, to: `/notes/${n.id}` });
+    for (const m of meds) if (has(query, m.name, m.dose, m.instructions)) out.push({ key: `m${m.id}`, icon: <Pill size={18} />, title: m.name, meta: `${tr('Medikament')} · ${m.dose}`, to: '/health/meds' });
+    for (const b of bills) if (has(query, b.title, b.note, b.category)) out.push({ key: `b${b.id}`, icon: <Receipt size={18} />, title: b.title, meta: `${tr('Zahlung')} · ${fmtMoney(b.amount)} · ${b.paidAt ? tr('bezahlt') : tr('fällig') + ' ' + fmtShort(b.due)}`, to: '/finance/bills' });
+    for (const f of finance) if (has(query, f.title, f.note, f.category)) out.push({ key: `f${f.id}`, icon: <Wallet size={18} />, title: f.title, meta: `${tr(f.kind === 'income' ? 'Einnahme' : 'Ausgabe')} · ${fmtMoney(f.amount)} · ${fmtShort(f.date)}`, to: f.kind === 'income' ? '/finance/income' : '/finance/expenses' });
+    for (const h of healthNotes) if (has(query, h.title, h.text)) out.push({ key: `h${h.id}`, icon: <HeartPulse size={18} />, title: h.title, meta: `${tr('Gesundheitsnotiz')} · ${fmtShort(h.date)}`, to: '/health' });
+    for (const h of habits) if (has(query, h.name)) out.push({ key: `g${h.id}`, icon: <Target size={18} />, title: tr(h.name), meta: tr('Gewohnheit'), to: '/habits' });
+    for (const j of journal) if (has(query, j.text, j.answer, j.prompt, ...j.gratitude)) out.push({ key: `j${j.id}`, icon: <BookHeart size={18} />, title: j.prompt ?? tr('Tagebucheintrag'), meta: `${tr('Tagebuch')} · ${fmtShort(j.date)}`, to: '/spirit/journal' });
     return out.slice(0, 80);
   }, [query, settings.journalPinHash]);
 
@@ -48,7 +49,7 @@ export default function SearchScreen() {
       <TopBar title="Suche" back />
       <div className="row card flat mb" style={{ padding: '4px 12px' }}>
         <Search size={18} className="faint" />
-        <input className="input" autoFocus style={{ border: 0, background: 'transparent', boxShadow: 'none' }} placeholder="Aufgaben, Termine, Notizen, Zahlungen …" value={q} onChange={(e) => setQ(e.target.value)} />
+        <input className="input" autoFocus style={{ border: 0, background: 'transparent', boxShadow: 'none' }} placeholder={t('Aufgaben, Termine, Notizen, Zahlungen …')} value={q} onChange={(e) => setQ(e.target.value)} />
       </div>
       {query.length < 2 ? <Empty icon={<Search size={30} />} text="Durchsuche alle Bereiche von Tagesanker." /> : hits?.length ? (
         <div className="list">
@@ -60,7 +61,7 @@ export default function SearchScreen() {
           ))}
         </div>
       ) : <Empty text="Keine Treffer." />}
-      {settings.journalPinHash && query.length >= 2 && <p className="tiny faint center mt">Geschützte Tagebucheinträge werden nicht durchsucht.</p>}
+      {settings.journalPinHash && query.length >= 2 && <p className="tiny faint center mt">{t('Geschützte Tagebucheinträge werden nicht durchsucht.')}</p>}
     </div>
   );
 }

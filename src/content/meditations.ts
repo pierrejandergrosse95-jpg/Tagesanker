@@ -1,3 +1,4 @@
+import { L } from '../i18n';
 export interface Meditation {
   id: string;
   title: string;
@@ -133,3 +134,37 @@ export const EMOTIONS = [
   'Freude', 'Dankbarkeit', 'Ruhe', 'Zuversicht', 'Liebe', 'Stolz', 'Neugier',
   'Müdigkeit', 'Unruhe', 'Traurigkeit', 'Ärger', 'Angst', 'Überforderung', 'Einsamkeit',
 ];
+
+type MedText = Pick<Meditation, 'title' | 'subtitle' | 'steps'>;
+
+const MEDITATIONS_EN: Record<string, MedText> = {
+  morning: { title: 'Morning meditation', subtitle: 'Gently into the day', steps: ['Sit comfortably. Feel the ground beneath you.', 'Breathe in deeply three times and slowly out again.', 'Notice how your body feels this morning – without judging.', 'Ask yourself: with which attitude do I want to go through today?', 'Choose one word for your day. Breathe it in.', 'Imagine meeting a person today with this word.', 'Feel gratitude for this new day.', 'Slowly move your fingers and toes and open your eyes.'] },
+  evening: { title: 'Evening meditation', subtitle: 'Laying down the day', steps: ['Make yourself comfortable and close your eyes.', 'Let the breath flow all by itself.', 'Let the day pass by like a film – without holding on.', 'What was beautiful today? Stay with this moment for a while.', 'What was difficult? Breathe into it and let it become a little lighter as you breathe out.', 'Mentally lay down the day like a coat on a hook.', 'Feel the heaviness of your body and the calm of the evening.'] },
+  sleep: { title: 'Falling asleep', subtitle: 'Body scan for the night', steps: ['Lie on your back, arms loosely beside your body.', 'Feel your feet. Let them become heavy and warm.', 'Move your attention to your lower legs and knees. Let go.', 'Thighs and pelvis sink deeper into the mattress.', 'Your belly rises and falls all by itself.', 'Chest, shoulders and arms become soft.', 'Your face relaxes – forehead, eyes, jaw.', 'Now you may simply let go and drift into sleep.'] },
+  stress: { title: 'Against stress', subtitle: 'Back to calm', steps: ['Pause. You may take a break now.', 'Breathe in for four seconds, hold briefly, breathe out for six seconds.', 'Silently name what is stressing you – just name it, do not solve it.', 'Place a hand on your heart. Feel the warmth.', 'Say inwardly: “This is a lot right now. And I am here.”', 'Feel your feet on the ground. You are supported.', 'What is the one next step that is enough?'] },
+  selflove: { title: 'Self-love', subtitle: 'Being kind to yourself', steps: ['Sit upright and yet relaxed.', 'Place both hands on your heart.', 'Breathe warmth into your chest.', 'Say inwardly: “May I be kind to myself.”', '“May I accept myself as I am.”', '“May I give myself what I need.”', 'Think of something you appreciate about yourself. Let it sink in.', 'Thank yourself for this time.'] },
+  calm: { title: 'Inner peace', subtitle: 'Arriving in the moment', steps: ['Close your eyes and arrive here.', 'Listen to the sounds around you – near and far.', 'Feel the air on your skin.', 'Direct your attention to your breath at the tip of your nose.', 'When thoughts come, let them drift past like leaves on a river.', 'Return gently to the breath again and again.', 'Rest in the stillness between two breaths.'] },
+  focus: { title: 'Concentration', subtitle: 'A clear mind', steps: ['Sit upright, eyes half closed.', 'Count your breaths from one to ten.', 'If you lose count, kindly start again at one.', 'Feel how your mind becomes clearer with every breath.', 'Think of the one task that matters now.', 'Imagine completing it calmly and with focus.', 'Open your eyes and take this clarity with you.'] },
+};
+
+const BREATH_EN: Record<string, Pick<BreathPattern, 'name' | 'description'>> = {
+  box: { name: 'Box breathing', description: '4 – 4 – 4 – 4 · calming and centring' },
+  '478': { name: '4-7-8 breathing', description: 'For relaxing and falling asleep' },
+  coherent: { name: 'Coherent breathing', description: '5.5 seconds in and out · balance' },
+  calm: { name: 'Extended exhale', description: '4 in, 6 out · against stress' },
+};
+
+const PROMPTS_EN = [
+  'What did me good today?', 'What would I like to let go of?', 'What am I proud of?', 'What do I really need right now?',
+  'What would I like to do differently tomorrow?', 'Which moment today was special?', 'What am I grateful for today?',
+  'What challenged me today – and what did I learn from it?', 'When did I feel alive today?', 'What would my future self advise me today?',
+  'Which feeling was strongest today?', 'Whom would I like to thank?', 'What did I do for myself today?', 'Which boundary did I keep well today – or should I have kept?',
+];
+
+export const localMeditation = (m: Meditation): Meditation => L(m, { ...m, ...MEDITATIONS_EN[m.id] });
+export const localBreath = (b: BreathPattern): BreathPattern => L(b, { ...b, ...BREATH_EN[b.id] });
+/** Gespeicherte Reflexionsfragen sind deutsch – Anzeige in der aktuellen Sprache. */
+export const localPrompt = (p: string): string => {
+  const i = JOURNAL_PROMPTS.indexOf(p);
+  return i >= 0 ? L(p, PROMPTS_EN[i]) : p;
+};

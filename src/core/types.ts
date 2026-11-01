@@ -27,6 +27,8 @@ export type DashboardWidget =
 export interface Settings {
   id: 'main';
   name: string;
+  /** Sprache der Oberfläche */
+  lang: 'system' | 'de' | 'en';
   onboarded: boolean;
   theme: ThemeMode;
   weeklyHours: number;

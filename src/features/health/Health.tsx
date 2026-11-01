@@ -1,15 +1,17 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { AlertTriangle, Check, Pill, Plus, Stethoscope, Trash2, X } from 'lucide-react';
+import { AlertTriangle, Check, ClipboardList, History, NotebookPen, Package, Pill, Plus, Stethoscope, Trash2, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { addDays, fmtDayMonth, fmtLong, fmtShort, relDay, today } from '../../core/dates';
 import { db } from '../../core/db';
 import { useToday } from '../../core/hooks';
 import { describeRecurrence, occurrencesBetween } from '../../core/recurrence';
 import type { CalEvent, HealthNote, Med } from '../../core/types';
-import { ColorPicker, Empty, Field, Hint, Ring, RecurrencePicker, Segmented, Sheet, TopBar, useUi } from '../../ui/components';
+import { ColorPicker, Empty, Field, Hint, ProgressBar, Ring, RecurrencePicker, Sheet, TopBar, useUi } from '../../ui/components';
+import { HubHero, ScrollMenu } from '../../ui/hub';
+import { t, t as tr } from '../../i18n';
 import { blankEvent, EventEditor } from '../calendar/Calendar';
-import { adherence, daysLeft, dosesForDay, isLowStock, type Dose } from './logic';
+import { adherence, dailyNeed, daysLeft, dosesForDay, isLowStock, type Dose } from './logic';
 
 export async function takeDose(d: Dose): Promise<void> {
   await db.transaction('rw', db.medIntakes, db.meds, async () => {
@@ -46,23 +48,23 @@ function MedEditor({ med, onClose }: { med: Med | null; onClose: () => void }) {
     onClose();
   };
   const remove = async () => {
-    if (m.id && (await confirm(`„${m.name}“ und die gesamte Einnahmehistorie löschen?`, { ok: 'Löschen', danger: true }))) {
+    if (m.id && (await confirm(t('„{n}“ und die gesamte Einnahmehistorie löschen?', { n: m.name }), { ok: 'Löschen', danger: true }))) {
       await db.medIntakes.where('medId').equals(m.id).delete();
       await db.meds.delete(m.id);
       onClose();
     }
   };
   return (
-    <Sheet open onClose={onClose} title={m.id ? 'Medikament bearbeiten' : 'Medikament hinzufügen'} actions={<>
+    <Sheet open onClose={onClose} title={m.id ? tr('Medikament bearbeiten') : tr('Medikament hinzufügen')} actions={<>
       {m.id && <button className="btn danger" onClick={remove}><Trash2 size={18} /></button>}
-      <button className="btn" onClick={save} disabled={!m.name.trim() || !m.times.length}>Speichern</button>
+      <button className="btn" onClick={save} disabled={!m.name.trim() || !m.times.length}>{t('Speichern')}</button>
     </>}>
       <div className="form">
         <div className="grid2">
-          <Field label="Name"><input className="input" autoFocus value={m.name} onChange={(e) => set({ name: e.target.value })} placeholder="z. B. Magnesium" /></Field>
-          <Field label="Dosierung"><input className="input" value={m.dose} onChange={(e) => set({ dose: e.target.value })} placeholder="z. B. 400 mg" /></Field>
+          <Field label="Name"><input className="input" autoFocus value={m.name} onChange={(e) => set({ name: e.target.value })} placeholder={t('z. B. Magnesium')} /></Field>
+          <Field label="Dosierung"><input className="input" value={m.dose} onChange={(e) => set({ dose: e.target.value })} placeholder={t('z. B. 400 mg')} /></Field>
         </div>
-        <Field label="Einnahmehinweise"><input className="input" value={m.instructions ?? ''} onChange={(e) => set({ instructions: e.target.value })} placeholder="z. B. zum Essen, mit viel Wasser" /></Field>
+        <Field label="Einnahmehinweise"><input className="input" value={m.instructions ?? ''} onChange={(e) => set({ instructions: e.target.value })} placeholder={t('z. B. zum Essen, mit viel Wasser')} /></Field>
         <Field label="Einnahmezeiten">
           <div className="chips">
             {m.times.map((t) => (
@@ -71,7 +73,7 @@ function MedEditor({ med, onClose }: { med: Med | null; onClose: () => void }) {
           </div>
           <div className="row">
             <input className="input" type="time" value={timeInput} onChange={(e) => setTimeInput(e.target.value)} />
-            <button type="button" className="btn secondary" onClick={() => timeInput && !m.times.includes(timeInput) && set({ times: [...m.times, timeInput].sort() })}>Hinzufügen</button>
+            <button type="button" className="btn secondary" onClick={() => timeInput && !m.times.includes(timeInput) && set({ times: [...m.times, timeInput].sort() })}>{t('Hinzufügen')}</button>
           </div>
         </Field>
         <Field label="Wiederholung"><RecurrencePicker value={m.recurrence} onChange={(recurrence) => set({ recurrence })} allow={['daily', 'weekdays', 'weekly', 'interval', 'monthly']} /></Field>
@@ -82,8 +84,8 @@ function MedEditor({ med, onClose }: { med: Med | null; onClose: () => void }) {
           <Field label="Warnen ab (Tage)"><input className="input" type="number" min={0} value={m.lowThresholdDays} onChange={(e) => set({ lowThresholdDays: Number(e.target.value) || 0 })} /></Field>
         </div>
         <Field label="Farbe"><ColorPicker value={m.color} onChange={(color) => set({ color })} /></Field>
-        <label className="row"><input type="checkbox" checked={!!m.active} onChange={(e) => set({ active: e.target.checked ? 1 : 0 })} /> Aktiv (Erinnerungen & Tagesplan)</label>
-        <Hint>Tagesanker dient nur der Organisation. Dosierung und Einnahme bitte immer mit Ärztin, Arzt oder Apotheke abstimmen.</Hint>
+        <label className="row"><input type="checkbox" checked={!!m.active} onChange={(e) => set({ active: e.target.checked ? 1 : 0 })} /> {t('Aktiv (Erinnerungen & Tagesplan)')}</label>
+        <Hint>{t('Tagesanker dient nur der Organisation. Dosierung und Einnahme bitte immer mit Ärztin, Arzt oder Apotheke abstimmen.')}</Hint>
       </div>
     </Sheet>
   );
@@ -96,11 +98,11 @@ function NoteEditor({ note, onClose }: { note: HealthNote | null; onClose: () =>
   return (
     <Sheet open onClose={onClose} title="Gesundheitsnotiz" actions={<>
       {n.id && <button className="btn danger" onClick={async () => { await db.healthNotes.delete(n.id!); onClose(); }}><Trash2 size={18} /></button>}
-      <button className="btn" disabled={!n.title.trim()} onClick={async () => { await db.healthNotes.put(n); onClose(); }}>Speichern</button>
+      <button className="btn" disabled={!n.title.trim()} onClick={async () => { await db.healthNotes.put(n); onClose(); }}>{t('Speichern')}</button>
     </>}>
       <div className="form">
         <Field label="Datum"><input className="input" type="date" value={n.date} onChange={(e) => setN({ ...n, date: e.target.value })} /></Field>
-        <Field label="Titel"><input className="input" value={n.title} onChange={(e) => setN({ ...n, title: e.target.value })} placeholder="z. B. Blutdruck, Symptome, Befund" /></Field>
+        <Field label="Titel"><input className="input" value={n.title} onChange={(e) => setN({ ...n, title: e.target.value })} placeholder={t('z. B. Blutdruck, Symptome, Befund')} /></Field>
         <Field label="Notiz"><textarea className="textarea" value={n.text} onChange={(e) => setN({ ...n, text: e.target.value })} /></Field>
       </div>
     </Sheet>
@@ -110,7 +112,7 @@ function NoteEditor({ note, onClose }: { note: HealthNote | null; onClose: () =>
 export function DoseRow({ d }: { d: Dose }) {
   return (
     <div className="list-item" style={{ background: d.intake ? 'var(--sage-soft)' : undefined }}>
-      <button className={`check ${d.intake ? 'on' : ''}`} style={{ width: 34, height: 34 }} aria-label={d.intake ? 'Einnahme zurücknehmen' : 'Als eingenommen markieren'} onClick={() => void takeDose(d)}>
+      <button className={`check ${d.intake ? 'on' : ''}`} style={{ width: 34, height: 34 }} aria-label={d.intake ? tr('Einnahme zurücknehmen') : tr('Als eingenommen markieren')} onClick={() => void takeDose(d)}>
         {d.intake && <Check size={18} />}
       </button>
       <div className="grow">
@@ -125,12 +127,16 @@ export function DoseRow({ d }: { d: Dose }) {
   );
 }
 
-type Tab = 'today' | 'meds' | 'history' | 'notes';
+type Tab = 'today' | 'meds' | 'stock' | 'doctor' | 'notes' | 'history';
+const TITLES: Record<Tab, string> = {
+  today: 'Einnahmeplan', meds: 'Meine Medikamente', stock: 'Vorrat & Nachkauf', doctor: 'Arzttermine', notes: 'Gesundheitsnotizen', history: 'Verlauf',
+};
 
 export default function HealthScreen() {
   const day = useToday();
-  const [params] = useSearchParams();
-  const [tab, setTab] = useState<Tab>((params.get('tab') as Tab) || 'today');
+  const nav = useNavigate();
+  const { section } = useParams();
+  const tab = (section as Tab | undefined) ?? null;
   const [editMed, setEditMed] = useState<Med | null>(null);
   const [editNote, setEditNote] = useState<HealthNote | null>(null);
   const [editEvent, setEditEvent] = useState<CalEvent | null>(null);
@@ -154,17 +160,70 @@ export default function HealthScreen() {
 
   const newMed = (): Med => ({ name: '', dose: '', times: ['08:00'], recurrence: { freq: 'daily' }, startDate: day, perIntake: 1, lowThresholdDays: 7, active: 1, color: '#6F8C6E' });
 
+  const editors = (
+    <>
+      <MedEditor med={editMed} onClose={() => setEditMed(null)} />
+      <NoteEditor note={editNote} onClose={() => setEditNote(null)} />
+      <EventEditor event={editEvent} onClose={() => setEditEvent(null)} />
+    </>
+  );
+
+  if (!tab) {
+    return (
+      <div className="screen">
+        <HubHero title={t('Medikamente & Gesundheit')} back={false} image="health"
+          actions={<button className="icon-btn" aria-label={t('Medikament hinzufügen')} onClick={() => setEditMed(newMed())}><Plus size={24} /></button>} />
+        {doses.length > 0 && (
+          <button className="card tap row mb" onClick={() => nav('/health/today')}>
+            <Ring value={done / doses.length} size={52}>{done}/{doses.length}</Ring>
+            <div className="grow"><div className="bold">{t('Einnahmen heute')}</div><div className="small muted">{done === doses.length ? t('Alles erledigt 🌿') : t('{n} offen', { n: doses.length - done })}</div></div>
+          </button>
+        )}
+        <ScrollMenu items={[
+          { key: 'meds', label: t('Meine Medikamente'), icon: <Pill size={20} />, badge: meds.length || undefined, to: '/health/meds' },
+          { key: 'today', label: t('Einnahmeplan'), icon: <ClipboardList size={20} />, badge: doses.length ? `${done}/${doses.length}` : undefined, to: '/health/today' },
+          { key: 'stock', label: t('Vorrat & Nachkauf'), icon: <Package size={20} />, badge: low.length ? `⚠ ${low.length}` : undefined, to: '/health/stock' },
+          { key: 'doctor', label: t('Arzttermine'), icon: <Stethoscope size={20} />, badge: upcomingDoctor.length || undefined, to: '/health/doctor' },
+          { key: 'notes', label: t('Gesundheitsnotizen'), icon: <NotebookPen size={20} />, to: '/health/notes' },
+          { key: 'history', label: t('Verlauf'), icon: <History size={20} />, to: '/health/history' },
+        ]} />
+        <Hint>{t('Tagesanker dient nur der Organisation. Dosierung und Einnahme bitte immer mit Ärztin, Arzt oder Apotheke abstimmen.')}</Hint>
+        {editors}
+      </div>
+    );
+  }
+
   return (
     <div className="screen">
-      <TopBar title="Gesundheit" sub={tab === 'today' ? fmtLong(day) : undefined} actions={<button className="icon-btn filled" aria-label="Medikament hinzufügen" onClick={() => setEditMed(newMed())}><Plus size={22} /></button>} />
-      <Segmented value={tab} onChange={setTab} options={[{ value: 'today', label: 'Heute' }, { value: 'meds', label: 'Übersicht' }, { value: 'history', label: 'Verlauf' }, { value: 'notes', label: 'Arzt & Notizen' }]} />
+      <TopBar title={TITLES[tab]} back="/health" sub={tab === 'today' ? fmtLong(day) : undefined} actions={
+        tab === 'doctor' ? <button className="icon-btn filled" aria-label={t('Neuer Termin')} onClick={() => setEditEvent(blankEvent(day, 'doctor'))}><Plus size={22} /></button>
+          : tab === 'notes' ? <button className="icon-btn filled" aria-label={t('Neue Notiz')} onClick={() => setEditNote({ date: day, title: '', text: '' })}><Plus size={22} /></button>
+            : <button className="icon-btn filled" aria-label={t('Medikament hinzufügen')} onClick={() => setEditMed(newMed())}><Plus size={22} /></button>
+      } />
+
+      {tab === 'stock' && (
+        <div className="stack">
+          {meds.filter((m) => m.stock != null).sort((a, b) => (daysLeft(a) ?? 9999) - (daysLeft(b) ?? 9999)).map((m) => {
+            const left = daysLeft(m);
+            return (
+              <button key={m.id} className="card tap" onClick={() => setEditMed(m)} style={{ background: isLowStock(m) ? 'var(--danger-soft)' : undefined }}>
+                <div className="row between"><div className="bold">{m.name}</div><span className={`badge ${isLowStock(m) ? 'danger' : ''}`}>{left != null ? t('{n} Tage', { n: left }) : '–'}</span></div>
+                <div className="small muted">{t('Vorrat')}: {m.stock} · {t('pro Tag')}: {Math.round(dailyNeed(m) * 10) / 10}</div>
+                <div style={{ marginTop: 6 }}><ProgressBar value={Math.min(1, (left ?? 0) / 30)} color={isLowStock(m) ? 'var(--danger)' : undefined} /></div>
+              </button>
+            );
+          })}
+          {!meds.some((m) => m.stock != null) && <div className="card"><Empty text="Trage beim Medikament einen Vorrat ein, um rechtzeitig an den Nachkauf erinnert zu werden." /></div>}
+        </div>
+      )}
+
 
       {tab === 'today' && (
         <div className="stack">
           {doses.length > 0 && (
             <div className="card row">
               <Ring value={done / doses.length} size={52}>{done}/{doses.length}</Ring>
-              <div className="grow"><div className="bold">Einnahmen heute</div><div className="small muted">{done === doses.length ? 'Alles erledigt 🌿' : `${doses.length - done} offen`}</div></div>
+              <div className="grow"><div className="bold">{t('Einnahmen heute')}</div><div className="small muted">{done === doses.length ? t('Alles erledigt 🌿') : t('{n} offen', { n: doses.length - done })}</div></div>
             </div>
           )}
           {low.map((m) => (
@@ -174,7 +233,7 @@ export default function HealthScreen() {
             </div>
           ))}
           {doses.length ? <div className="list">{doses.map((d) => <DoseRow key={`${d.med.id}-${d.time}`} d={d} />)}</div> : (
-            <div className="card"><Empty icon={<Pill size={30} />} text="Heute sind keine Einnahmen geplant." action={<button className="btn secondary" onClick={() => setEditMed(newMed())}><Plus size={18} /> Medikament hinzufügen</button>} /></div>
+            <div className="card"><Empty icon={<Pill size={30} />} text="Heute sind keine Einnahmen geplant." action={<button className="btn secondary" onClick={() => setEditMed(newMed())}><Plus size={18} /> {t('Medikament hinzufügen')}</button>} /></div>
           )}
         </div>
       )}
@@ -190,7 +249,7 @@ export default function HealthScreen() {
                     <span className="bar-accent" style={{ background: m.color }} />
                     <div className="grow">
                       <div className="title">{m.name} <span className="muted small">{m.dose}</span></div>
-                      <div className="meta">{describeRecurrence(m.recurrence)} · {m.times.join(', ')} Uhr</div>
+                      <div className="meta">{describeRecurrence(m.recurrence)} · {m.times.join(', ')} {t('Uhr')}</div>
                     </div>
                     {m.stock != null && <span className={`badge ${isLowStock(m) ? 'danger' : ''}`}>{m.stock} St.{left != null ? ` · ${left} T.` : ''}</span>}
                   </button>
@@ -198,7 +257,7 @@ export default function HealthScreen() {
               })}
             </div>
           ) : <div className="card"><Empty icon={<Pill size={30} />} text="Noch keine Medikamente angelegt." /></div>}
-          <button className="btn secondary" onClick={() => setEditMed(newMed())}><Plus size={18} /> Medikament hinzufügen</button>
+          <button className="btn secondary" onClick={() => setEditMed(newMed())}><Plus size={18} /> {t('Medikament hinzufügen')}</button>
         </div>
       )}
 
@@ -219,20 +278,23 @@ export default function HealthScreen() {
         </div>
       )}
 
-      {tab === 'notes' && (
+      {tab === 'doctor' && (
         <div className="stack">
-          <div className="section-title" style={{ marginTop: 0 }}><h2>Arzttermine</h2><button onClick={() => setEditEvent(blankEvent(day, 'doctor'))}>+ Termin</button></div>
           {upcomingDoctor.length ? (
             <div className="list">
               {upcomingDoctor.map(({ e, d }) => (
                 <button key={e.id} className="list-item" onClick={() => setEditEvent(e)}>
                   <Stethoscope size={18} color="var(--danger)" />
-                  <div className="grow"><div className="title">{e.title}</div><div className="meta">{relDay(d, day)} · {fmtShort(d)}{e.time ? `, ${e.time} Uhr` : ''}</div></div>
+                  <div className="grow"><div className="title">{e.title}</div><div className="meta">{relDay(d, day)} · {fmtShort(d)}{e.time ? `, ${e.time} ${t('Uhr')}` : ''}</div></div>
                 </button>
               ))}
             </div>
           ) : <div className="card"><Empty text="Keine anstehenden Arzttermine." /></div>}
-          <div className="section-title"><h2>Gesundheitsnotizen</h2><button onClick={() => setEditNote({ date: day, title: '', text: '' })}>+ Notiz</button></div>
+        </div>
+      )}
+
+      {tab === 'notes' && (
+        <div className="stack">
           {notes.length ? (
             <div className="list">
               {notes.map((n) => (
@@ -245,9 +307,7 @@ export default function HealthScreen() {
         </div>
       )}
 
-      <MedEditor med={editMed} onClose={() => setEditMed(null)} />
-      <NoteEditor note={editNote} onClose={() => setEditNote(null)} />
-      <EventEditor event={editEvent} onClose={() => setEditEvent(null)} />
+      {editors}
     </div>
   );
 }

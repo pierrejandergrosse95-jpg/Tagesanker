@@ -150,11 +150,11 @@ Datumswerte als ISO-Tag `YYYY-MM-DD`, Uhrzeiten als `HH:MM` (lokale Zeit).
 
 | Token | Hell | Nacht |
 | --- | --- | --- |
-| Waldgrün (Primär) | `#1F3A2E` | `#A9C6A8` |
-| Salbei | `#A9BFA3` | `#6F8C6E` |
-| Creme (Hintergrund) | `#F4EFE4` | `#141A16` |
-| Karte | `#FBF8F1` | `#1D2520` |
-| Gold (Akzent) | `#C9A55C` | `#D9B873` |
+| Bordeaux / Gold (Primär) | `#6B1F2A` | `#D6B05C` |
+| Bronze (Akzent) | `#A8843F` | `#B08A45` |
+| Pergament (Hintergrund) | `#ECE0C2` | `#110E18` |
+| Karte | `#F7EED8` | `#1B1724` |
+| Tinte (Text) | `#2B1F17` | `#EFE5CF` |
 
 - **Typografie:** Serifenschrift für Überschriften (ruhig, hochwertig), klare
   Sans-Serif für Inhalte. Systemschriften als Fallback – offline verfügbar.
@@ -166,10 +166,32 @@ Datumswerte als ISO-Tag `YYYY-MM-DD`, Uhrzeiten als `HH:MM` (lokale Zeit).
   `prefers-reduced-motion` wird respektiert.
 - **Nachtmodus:** System / Hell / Dunkel, umschaltbar in den Einstellungen.
 
-**Navigation** (Bottom-Bar, wie gefordert): Dashboard · Kalender · Finanzen · Gesundheit ·
-Spiritualität. Aufgaben, Schichtplan, Notizen, Gewohnheiten, Suche und Einstellungen
-über die Dashboard-Kacheln und das Menü „Bereiche“ (Raster-Symbol oben). Ein
-„+“-Schnellzugriff legt Aufgabe, Termin, Schicht, Ausgabe oder Notiz an.
+**Navigation** (wie im ursprünglichen Auftrag und in der Gestaltungsvorlage): Übersicht · Kalender ·
+Finanzen · Gesundheit · Spiritualität. Weitere Bereiche über „Bereiche“ (Raster-Symbol auf der
+Übersicht) mit Pergament-Kacheln: Schichtplan, Medikamente, Finanzen, Aufgaben, Notizen,
+Gewohnheiten, Spiritualität, Kalender, Suche, Einstellungen. Das „+“ auf der Übersicht legt
+Aufgabe, Termin, Schicht, Ausgabe oder Notiz an.
+
+**Bereichs-Seiten:** Jeder Bereich beginnt mit einem Kopfbild (eigene Illustration + Emblem) und
+einem Menü aus Pergament-Knöpfen, die zu Unterseiten führen oder Inhalte aufklappen
+(z. B. Gesundheit → Meine Medikamente, Einnahmeplan, Vorrat & Nachkauf, Arzttermine,
+Gesundheitsnotizen, Verlauf).
+
+**Stil:** Nachtgrün, Gold und Pergament. Dunkler Modus: Gold auf Nachtgrün; heller Modus:
+Pergament mit Waldgrün. Goldrahmen-Kacheln für den Tagesüberblick, Pergament-Knöpfe für Menüs.
+Schriften Cinzel / Cinzel Decorative / IM Fell English (offline gebündelt). Eigene SVG-Embleme
+(`src/ui/emblems.tsx`) und Szenen (`src/ui/scenes.tsx`) – bewusst ohne geschützte Namen, Figuren
+oder Wappen bekannter Fantasy-Reihen. Tarot mit eigenem Kartenset (`assets/tarot-original.png`).
+
+**Bildschirmgrößen:** Fließende Größen (`clamp()`), Raster passen sich an. Ab 600 px breitere
+Inhalte, ab 900 px (Tablet/Querformat) Seitenleiste statt unterer Navigation. Notch und
+Statusleiste werden über Capacitor-SystemBars (`--safe-area-inset-*`) bzw. `env()` berücksichtigt.
+
+**Sprachen:** Deutsch und Englisch (`src/i18n`). Deutsch ist Quellsprache, `t('…')` liefert die
+Übersetzung aus `en.ts`; Inhalte (Impulse, Tarot, Sternzeichen, Mond, Meditationen) haben eigene
+englische Fassungen. Sprache: automatisch nach Gerät oder fest in den Einstellungen bzw. auf dem
+Startbildschirm. Datums-, Zahlen- und Währungsformate folgen der Sprache.
+
 
 ---
 

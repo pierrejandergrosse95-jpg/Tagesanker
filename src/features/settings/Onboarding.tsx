@@ -1,14 +1,17 @@
-import { Bell, Leaf, Moon, Sparkles } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { useState } from 'react';
 import { germanTzOffset, profileSign } from '../../core/astro/zodiac';
 import { db } from '../../core/db';
-import { updateSettings } from '../../core/hooks';
+import { updateSettings, useSettings } from '../../core/hooks';
 import { requestPermission, rescheduleAll } from '../../core/notifications';
 import type { Profile } from '../../core/types';
-import { Field, Hint } from '../../ui/components';
+import { t } from '../../i18n';
+import { Field, Hint, Segmented } from '../../ui/components';
+import { Emblem } from '../../ui/emblems';
 import { BirthForm } from '../spirit/Profile';
 
 export default function Onboarding() {
+  const settings = useSettings();
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
   const [profile, setProfile] = useState<Profile>({ id: 'me' });
@@ -20,37 +23,46 @@ export default function Onboarding() {
     void rescheduleAll();
   };
 
+  if (step === 0) {
+    return (
+      <div className="splash">
+        <img className="splash-img" src="./areas/home-full.jpg" alt="" />
+        <div className="splash-content">
+          <div className="splash-title">Tagesanker</div>
+          <p className="serif" style={{ fontSize: 'clamp(17px, 4.6vw, 22px)', marginTop: 8, textShadow: '0 1px 8px rgb(0 0 0 / .6)' }}>
+            {t('Dein Alltag. Dein Rhythmus.')}<br />{t('Deine innere Balance.')}
+          </p>
+          <div className="grow" />
+          <div style={{ width: '100%', maxWidth: 300, marginTop: 10 }}>
+            <Segmented value={settings.lang === 'system' ? 'system' : settings.lang} onChange={(l) => void updateSettings({ lang: l })} options={[{ value: 'de', label: 'Deutsch' }, { value: 'en', label: 'English' }, { value: 'system', label: 'Auto' }]} />
+          </div>
+          <button className="btn parchment" style={{ minWidth: 220 }} onClick={() => setStep(1)}>{t('App starten')}</button>
+          <p className="tiny" style={{ marginTop: 12, opacity: 0.85 }}>{t('Privat & offline – deine Daten bleiben auf deinem Gerät.')}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="screen" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingBottom: 40 }}>
-      {step === 0 && (
-        <div className="stack center" style={{ alignItems: 'center' }}>
-          <img src="./icon-512.png" alt="" width={180} height={180} style={{ borderRadius: 32, boxShadow: 'var(--shadow)' }} />
-          <h1 className="sr-only">Tagesanker</h1>
-          <p className="serif muted" style={{ fontSize: 18 }}>Dein Alltag. Dein Rhythmus.<br />Deine innere Balance.</p>
-          <div className="card stack" style={{ textAlign: 'left', marginTop: 12 }}>
-            <div className="row"><Leaf size={20} className="gold-text" /><span className="small">Schichten, Termine, Aufgaben, Finanzen und Medikamente an einem Ort.</span></div>
-            <div className="row"><Moon size={20} className="gold-text" /><span className="small">Mondkalender, Meditation, Tagesimpulse und Tagebuch für deine innere Reise.</span></div>
-            <div className="row"><Sparkles size={20} className="gold-text" /><span className="small">Privat: Alle Daten bleiben offline auf deinem Gerät.</span></div>
-          </div>
-          <button className="btn block mt" onClick={() => setStep(1)}>Los geht’s</button>
-        </div>
-      )}
       {step === 1 && (
         <div className="stack">
-          <h1>Wie dürfen wir dich nennen?</h1>
-          <Field label="Vorname"><input className="input" autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="z. B. Lena" onKeyDown={(e) => e.key === 'Enter' && setStep(2)} /></Field>
-          <button className="btn block" onClick={() => setStep(2)}>Weiter</button>
+          <div className="center"><Emblem name="quill" size={90} /></div>
+          <h1>{t('Wie dürfen wir dich nennen?')}</h1>
+          <Field label="Vorname"><input className="input" autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder={t('z. B. Lena')} onKeyDown={(e) => e.key === 'Enter' && setStep(2)} /></Field>
+          <button className="btn block" onClick={() => setStep(2)}>{t('Weiter')}</button>
         </div>
       )}
       {step === 2 && (
         <div className="stack">
-          <h1>Dein Geburtsprofil</h1>
-          <p className="small muted">Optional – für dein Sternzeichen, persönliche Impulse und ein Geburtshoroskop. Du kannst es jederzeit später ergänzen.</p>
+          <div className="center"><Emblem name="star" size={80} /></div>
+          <h1>{t('Dein Geburtsprofil')}</h1>
+          <p className="small muted">{t('Optional – für dein Sternzeichen, persönliche Impulse und ein Geburtshoroskop. Du kannst es jederzeit später ergänzen.')}</p>
           <div className="card"><BirthForm value={profile} onChange={setProfile} /></div>
           {sign && <div className="card cosmic center"><span className="serif gold-text" style={{ fontSize: 30 }}>{sign.symbol}</span> <span className="serif" style={{ fontSize: 20 }}>{sign.name}</span><div className="small muted">{sign.keywords.join(' · ')}</div></div>}
           <div className="grid2">
-            <button className="btn ghost" onClick={() => { setProfile({ id: 'me' }); setStep(3); }}>Überspringen</button>
-            <button className="btn" onClick={() => setStep(3)}>Weiter</button>
+            <button className="btn ghost" onClick={() => { setProfile({ id: 'me' }); setStep(3); }}>{t('Überspringen')}</button>
+            <button className="btn" onClick={() => setStep(3)}>{t('Weiter')}</button>
           </div>
           <Hint>Geburtsdaten werden nur lokal gespeichert.</Hint>
         </div>
@@ -58,14 +70,14 @@ export default function Onboarding() {
       {step === 3 && (
         <div className="stack center" style={{ alignItems: 'center' }}>
           <Bell size={44} className="gold-text" />
-          <h1>Erinnerungen</h1>
-          <p className="small muted">Tagesanker erinnert dich an Schichten, Medikamente, Zahlungen, Termine und deinen Tagesimpuls. Jede Art lässt sich später einzeln abschalten.</p>
-          <button className="btn block" onClick={async () => { await requestPermission(); await finish(); }}>Benachrichtigungen erlauben</button>
-          <button className="btn ghost block" onClick={finish}>Später</button>
+          <h1>{t('Erinnerungen')}</h1>
+          <p className="small muted">{t('Tagesanker erinnert dich an Schichten, Medikamente, Zahlungen, Termine und deinen Tagesimpuls. Jede Art lässt sich später einzeln abschalten.')}</p>
+          <button className="btn block" onClick={async () => { await requestPermission(); await finish(); }}>{t('Benachrichtigungen erlauben')}</button>
+          <button className="btn ghost block" onClick={finish}>{t('Später')}</button>
         </div>
       )}
       <div className="row mt" style={{ justifyContent: 'center', gap: 6 }}>
-        {[0, 1, 2, 3].map((i) => <span key={i} className="swatch" style={{ background: i === step ? 'var(--forest)' : 'var(--line)' }} />)}
+        {[1, 2, 3].map((i) => <span key={i} className="swatch" style={{ background: i === step ? 'var(--forest)' : 'var(--line)' }} />)}
       </div>
     </div>
   );

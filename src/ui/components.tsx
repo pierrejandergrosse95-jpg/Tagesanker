@@ -2,19 +2,23 @@ import { ChevronLeft, Info, X } from 'lucide-react';
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Recurrence } from '../core/types';
+import { t } from '../i18n';
+import { weekdaysShort } from '../core/dates';
+
+const tr = (x: ReactNode) => (typeof x === 'string' ? t(x) : x);
 
 export function TopBar({ title, sub, back, actions }: { title: ReactNode; sub?: ReactNode; back?: boolean | string; actions?: ReactNode }) {
   const nav = useNavigate();
   return (
     <header className="topbar">
       {back && (
-        <button className="icon-btn" aria-label="Zurück" onClick={() => (typeof back === 'string' ? nav(back) : nav(-1))}>
+        <button className="icon-btn" aria-label={t('Zurück')} onClick={() => (typeof back === 'string' ? nav(back) : nav(-1))}>
           <ChevronLeft size={24} />
         </button>
       )}
       <div className="grow">
-        <h1>{title}</h1>
-        {sub && <div className="sub">{sub}</div>}
+        <h1>{tr(title)}</h1>
+        {sub && <div className="sub">{tr(sub)}</div>}
       </div>
       {actions}
     </header>
@@ -26,7 +30,7 @@ export function Segmented<T extends string>({ value, onChange, options }: { valu
     <div className="segmented" role="tablist">
       {options.map((o) => (
         <button key={o.value} role="tab" aria-selected={value === o.value} className={value === o.value ? 'active' : ''} onClick={() => onChange(o.value)}>
-          {o.label}
+          {t(o.label)}
         </button>
       ))}
     </div>
@@ -47,11 +51,11 @@ export function Sheet({ open, onClose, title, children, actions }: { open: boole
   if (!open) return null;
   return (
     <div className="backdrop" onClick={onClose}>
-      <div className="sheet" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>
+      <div className="sheet" role="dialog" aria-modal="true" aria-label={t(title)} onClick={(e) => e.stopPropagation()}>
         <div className="grabber" />
         <div className="sheet-head">
-          <h2>{title}</h2>
-          <button className="icon-btn soft" aria-label="Schließen" onClick={onClose}><X size={20} /></button>
+          <h2>{t(title)}</h2>
+          <button className="icon-btn soft" aria-label={t('Schließen')} onClick={onClose}><X size={20} /></button>
         </div>
         {children}
         {actions && <div className="sheet-actions">{actions}</div>}
@@ -63,7 +67,7 @@ export function Sheet({ open, onClose, title, children, actions }: { open: boole
 export function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="field">
-      <span>{label}</span>
+      <span>{t(label)}</span>
       {children}
     </label>
   );
@@ -71,7 +75,7 @@ export function Field({ label, children }: { label: string; children: ReactNode 
 
 export function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label?: string }) {
   return (
-    <label className="toggle" aria-label={label}>
+    <label className="toggle" aria-label={label ? t(label) : undefined}>
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
       <span />
     </label>
@@ -82,7 +86,7 @@ export function Empty({ icon, text, action }: { icon?: ReactNode; text: string; 
   return (
     <div className="empty">
       {icon}
-      <div>{text}</div>
+      <div>{t(text)}</div>
       {action}
     </div>
   );
@@ -92,7 +96,7 @@ export function Hint({ children }: { children: ReactNode }) {
   return (
     <div className="note-hint">
       <Info size={14} style={{ flex: 'none', marginTop: 2 }} />
-      <span>{children}</span>
+      <span>{tr(children)}</span>
     </div>
   );
 }
@@ -192,14 +196,13 @@ export function ColorPicker({ value, onChange }: { value: string; onChange: (c: 
   return (
     <div className="chips">
       {PALETTE.map((c) => (
-        <button key={c} type="button" aria-label={`Farbe ${c}`} className={`color-dot ${value.toLowerCase() === c.toLowerCase() ? 'active' : ''}`} style={{ background: c }} onClick={() => onChange(c)} />
+        <button key={c} type="button" aria-label={`${t('Farbe')} ${c}`} className={`color-dot ${value.toLowerCase() === c.toLowerCase() ? 'active' : ''}`} style={{ background: c }} onClick={() => onChange(c)} />
       ))}
     </div>
   );
 }
 
 const WD = [1, 2, 3, 4, 5, 6, 0];
-const WD_NAMES = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
 export function RecurrencePicker({ value, onChange, allow = ['none', 'daily', 'weekly', 'weekdays', 'interval', 'monthly', 'yearly'] }: { value: Recurrence; onChange: (r: Recurrence) => void; allow?: Recurrence['freq'][] }) {
   const labels: Record<Recurrence['freq'], string> = { none: 'Einmalig', daily: 'Täglich', weekly: 'Wöchentlich', weekdays: 'Bestimmte Tage', interval: 'Alle X Tage', monthly: 'Monatlich', yearly: 'Jährlich' };
@@ -209,7 +212,7 @@ export function RecurrencePicker({ value, onChange, allow = ['none', 'daily', 'w
         const freq = e.target.value as Recurrence['freq'];
         onChange({ freq, weekdays: freq === 'weekdays' ? value.weekdays ?? [1, 2, 3, 4, 5] : undefined, every: freq === 'interval' ? value.every ?? 2 : undefined });
       }}>
-        {allow.map((f) => <option key={f} value={f}>{labels[f]}</option>)}
+        {allow.map((f) => <option key={f} value={f}>{t(labels[f])}</option>)}
       </select>
       {value.freq === 'weekdays' && (
         <div className="chips">
@@ -217,7 +220,7 @@ export function RecurrencePicker({ value, onChange, allow = ['none', 'daily', 'w
             const on = value.weekdays?.includes(d);
             return (
               <button type="button" key={d} className={`chip ${on ? 'active' : ''}`} onClick={() => onChange({ ...value, weekdays: on ? value.weekdays!.filter((x) => x !== d) : [...(value.weekdays ?? []), d] })}>
-                {WD_NAMES[d]}
+                {weekdaysShort()[d]}
               </button>
             );
           })}
@@ -243,10 +246,11 @@ export function UiProvider({ children }: { children: ReactNode }) {
   const [msg, setMsg] = useState<string | null>(null);
   const [dlg, setDlg] = useState<{ msg: string; ok: string; danger?: boolean; resolve: (v: boolean) => void } | null>(null);
   const toast = useCallback((m: string) => {
+    m = t(m);
     setMsg(m);
     window.setTimeout(() => setMsg((cur) => (cur === m ? null : cur)), 2400);
   }, []);
-  const confirm = useCallback((m: string, opts?: { ok?: string; danger?: boolean }) => new Promise<boolean>((resolve) => setDlg({ msg: m, ok: opts?.ok ?? 'OK', danger: opts?.danger, resolve })), []);
+  const confirm = useCallback((m: string, opts?: { ok?: string; danger?: boolean }) => new Promise<boolean>((resolve) => setDlg({ msg: t(m), ok: t(opts?.ok ?? 'OK'), danger: opts?.danger, resolve })), []);
   const close = (v: boolean) => {
     dlg?.resolve(v);
     setDlg(null);
@@ -256,7 +260,7 @@ export function UiProvider({ children }: { children: ReactNode }) {
       {children}
       {msg && <div className="toast" role="status">{msg}</div>}
       <Sheet open={!!dlg} onClose={() => close(false)} title="Bitte bestätigen" actions={<>
-        <button className="btn secondary" onClick={() => close(false)}>Abbrechen</button>
+        <button className="btn secondary" onClick={() => close(false)}>{t('Abbrechen')}</button>
         <button className={`btn ${dlg?.danger ? 'danger' : ''}`} onClick={() => close(true)}>{dlg?.ok}</button>
       </>}>
         <p>{dlg?.msg}</p>

@@ -72,6 +72,7 @@ export type TableName = (typeof TABLES)[number];
 export const DEFAULT_SETTINGS: Settings = {
   id: 'main',
   name: '',
+  lang: 'system',
   onboarded: false,
   theme: 'system',
   weeklyHours: 40,

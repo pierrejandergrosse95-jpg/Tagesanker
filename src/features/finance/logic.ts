@@ -1,3 +1,4 @@
+import { lang, locale } from '../../i18n';
 import { diffDays, endOfMonth, startOfMonth } from '../../core/dates';
 import type { Bill, Budget, FinanceEntry, ISODate } from '../../core/types';
 
@@ -8,7 +9,7 @@ export const EXPENSE_CATEGORIES = [
 export const INCOME_CATEGORIES = ['Gehalt', 'Nebenjob', 'Zuschüsse', 'Erstattung', 'Geschenk', 'Sonstiges'];
 
 export function fmtMoney(cents: number, currency = 'EUR'): string {
-  return new Intl.NumberFormat('de-DE', { style: 'currency', currency }).format(cents / 100);
+  return new Intl.NumberFormat(locale(), { style: 'currency', currency }).format(cents / 100);
 }
 
 /** "12,50" / "12.50" / "1.234,56" → Cent */
@@ -16,13 +17,16 @@ export function parseMoney(input: string): number | null {
   const s = input.trim().replace(/\s|€/g, '');
   if (!s) return null;
   let norm = s;
-  if (s.includes(',')) norm = s.replace(/\./g, '').replace(',', '.');
+  const lastComma = s.lastIndexOf(',');
+  const lastDot = s.lastIndexOf('.');
+  if (lastComma > lastDot) norm = s.replace(/\./g, '').replace(',', '.'); // 1.234,56
+  else if (lastComma >= 0) norm = s.replace(/,/g, ''); // 1,234.56
   const n = Number(norm);
   if (!Number.isFinite(n)) return null;
   return Math.round(n * 100);
 }
 
-export const centsToInput = (c: number) => (c / 100).toFixed(2).replace('.', ',');
+export const centsToInput = (c: number) => (lang() === 'en' ? (c / 100).toFixed(2) : (c / 100).toFixed(2).replace('.', ','));
 
 export type BillStatus = 'paid' | 'overdue' | 'soon' | 'open';
 

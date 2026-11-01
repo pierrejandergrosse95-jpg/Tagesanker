@@ -1,4 +1,5 @@
 import { fromISO } from '../dates';
+import { lang } from '../../i18n';
 import type { ISODate, Profile } from '../types';
 import { ascendant, moonLongitude, sunLongitude, toJD } from './ephemeris';
 
@@ -175,10 +176,10 @@ export function natalChart(p: Profile): NatalChart | null {
   const jd = toJD(new Date(utcMs));
   const sunDeg = sunLongitude(jd);
   const moonDeg = moonLongitude(jd);
-  const chart: NatalChart = { sun: signFromLongitude(sunDeg), sunDeg, moon: signFromLongitude(moonDeg), moonDeg };
+  const chart: NatalChart = { sun: localSign(signFromLongitude(sunDeg)), sunDeg, moon: localSign(signFromLongitude(moonDeg)), moonDeg };
   if (p.birthTime && p.lat != null && p.lon != null) {
     chart.ascDeg = ascendant(jd, p.lat, p.lon);
-    chart.asc = signFromLongitude(chart.ascDeg);
+    chart.asc = localSign(signFromLongitude(chart.ascDeg));
   }
   return chart;
 }
@@ -186,8 +187,8 @@ export function natalChart(p: Profile): NatalChart | null {
 /** Zeichen des Profils – mit Geburtszeit über die exakte Sonnenlänge, sonst über das Datum. */
 export function profileSign(p?: Profile | null): SignInfo | null {
   if (!p?.birthDate) return null;
-  if (p.birthTime) return natalChart(p)?.sun ?? signFromDate(p.birthDate);
-  return signFromDate(p.birthDate);
+  if (p.birthTime) return natalChart(p)?.sun ?? localSign(signFromDate(p.birthDate));
+  return localSign(signFromDate(p.birthDate));
 }
 
 export const fmtDeg = (lon: number) => {
@@ -222,3 +223,32 @@ export const CITIES: { name: string; lat: number; lon: number }[] = [
   { name: 'Zürich', lat: 47.377, lon: 8.541 }, { name: 'Bern', lat: 46.948, lon: 7.447 },
   { name: 'Basel', lat: 47.559, lon: 7.588 }, { name: 'Luxemburg', lat: 49.611, lon: 6.13 },
 ];
+
+type SignText = Pick<SignInfo, 'name' | 'range' | 'keywords' | 'traits' | 'strengths' | 'challenges' | 'growth' | 'ruler'>;
+
+/** Englische Fassung der Sternzeichen-Texte. */
+const SIGNS_EN: SignText[] = [
+  { name: 'Aries', range: 'Mar 21 – Apr 20', ruler: 'Mars', keywords: ['New beginnings', 'Courage', 'Drive'], traits: 'In astrological interpretation, Aries stands for new beginnings and the fire of life. It leads where others still hesitate and draws strength from movement and challenge.', strengths: ['Courage and determination', 'Enthusiasm', 'Honesty and directness', 'Quick decisions'], challenges: ['Impatience', 'Impulsive reactions', 'Starting things but not finishing them'], growth: ['Discover patience as a strength', 'Pause before you react', 'Dose your energy consciously'] },
+  { name: 'Taurus', range: 'Apr 21 – May 20', ruler: 'Venus', keywords: ['Stability', 'Pleasure', 'Security'], traits: 'Taurus is considered the sign of grounding and sensuality. It builds slowly but lastingly and finds peace in nature, beauty and reliable structures.', strengths: ['Endurance and reliability', 'Sense of beauty and pleasure', 'Practical thinking', 'Loyalty'], challenges: ['Clinging to the familiar', 'Stubbornness', 'Worrying about security'], growth: ['See change as an opportunity', 'Practise letting go', 'Feel self-worth independent of possessions'] },
+  { name: 'Gemini', range: 'May 21 – Jun 21', ruler: 'Mercury', keywords: ['Curiosity', 'Exchange', 'Lightness'], traits: 'Gemini stands for communication, thirst for knowledge and mental agility. It connects people and ideas and loves variety.', strengths: ['Talent for communication', 'Versatility', 'Humour', 'Quick understanding'], challenges: ['Restlessness and distraction', 'Superficiality for lack of time', 'Difficulty deciding'], growth: ['Allow depth instead of breadth', 'Stay with one thing', 'Experience silence as nourishment'] },
+  { name: 'Cancer', range: 'Jun 22 – Jul 22', ruler: 'Moon', keywords: ['Belonging', 'Feeling', 'Care'], traits: 'Cancer is associated with home, emotional depth and care. It senses moods finely and creates spaces where others feel safe.', strengths: ['Empathy', 'Caring nature', 'Intuition', 'Faithfulness'], challenges: ['Sensitivity', 'Withdrawal when hurt', 'Forgetting oneself'], growth: ['Set boundaries lovingly', 'Care for yourself as you care for others', 'Put feelings into words'] },
+  { name: 'Leo', range: 'Jul 23 – Aug 23', ruler: 'Sun', keywords: ['Heart', 'Expression', 'Generosity'], traits: 'Leo stands for warmth of heart, creativity and self-expression. It wants to shine and inspire others with its joy of life.', strengths: ['Generosity', 'Creativity', 'Leadership', 'Warmth and loyalty'], challenges: ['Need for recognition', 'Pride', 'Difficulty showing weakness'], growth: ['Nourish self-worth from within', 'Allow vulnerability', 'Let others shine'] },
+  { name: 'Virgo', range: 'Aug 24 – Sep 23', ruler: 'Mercury', keywords: ['Order', 'Mindfulness', 'Service'], traits: 'Virgo is seen as the sign of care and discernment. It brings order to chaos and pays attention to health and detail.', strengths: ['Precision', 'Helpfulness', 'Analytical thinking', 'Sense of responsibility'], challenges: ['Perfectionism', 'Self-criticism', 'Worrying about small things'], growth: ['Accept “good enough”', 'Be gentle with yourself', 'Trust instead of control'] },
+  { name: 'Libra', range: 'Sep 24 – Oct 23', ruler: 'Venus', keywords: ['Harmony', 'Relationship', 'Aesthetics'], traits: 'Libra seeks balance, fairness and beauty. It thinks in relationships and has a fine sense of balance.', strengths: ['Diplomacy', 'Sense of justice', 'Charm', 'Sense of aesthetics'], challenges: ['Indecisiveness', 'Avoiding conflict', 'Putting own wishes aside'], growth: ['Say “no” clearly', 'Take your own needs seriously', 'See conflict as clarification'] },
+  { name: 'Scorpio', range: 'Oct 24 – Nov 22', ruler: 'Pluto / Mars', keywords: ['Depth', 'Transformation', 'Intensity'], traits: 'Scorpio stands for depth, passion and transformation. It looks behind facades and can reinvent itself again and again.', strengths: ['Depth', 'Willpower', 'Loyalty', 'Intuition'], challenges: ['Mistrust', 'All-or-nothing thinking', 'Difficulty forgiving'], growth: ['Dare to trust', 'Let go of control', 'Experience forgiveness as liberation'] },
+  { name: 'Sagittarius', range: 'Nov 23 – Dec 21', ruler: 'Jupiter', keywords: ['Meaning', 'Freedom', 'Optimism'], traits: 'Sagittarius seeks wide horizons, meaning and truth. It loves journeys – outer and inner – and carries confidence into the world.', strengths: ['Optimism', 'Openness', 'Humour', 'Search for meaning'], challenges: ['Impatience with details', 'Exaggeration', 'Commitment'], growth: ['Arrive in the here and now', 'Make promises consciously', 'Combine freedom and closeness'] },
+  { name: 'Capricorn', range: 'Dec 22 – Jan 20', ruler: 'Saturn', keywords: ['Structure', 'Responsibility', 'Endurance'], traits: 'Capricorn stands for determination, discipline and responsibility. It climbs its mountain step by step.', strengths: ['Discipline', 'Reliability', 'Realism', 'Endurance'], challenges: ['Strictness with oneself', 'Work before joy', 'Holding back feelings'], growth: ['Breaks as part of the path', 'Allow lightness', 'Celebrate successes'] },
+  { name: 'Aquarius', range: 'Jan 21 – Feb 19', ruler: 'Uranus / Saturn', keywords: ['Freedom', 'Vision', 'Community'], traits: 'Aquarius thinks ahead, loves independence and ideas that make the world better. It is individual and community-minded at the same time.', strengths: ['Originality', 'Tolerance', 'Future thinking', 'Team spirit'], challenges: ['Emotional distance', 'Wilfulness', 'Restlessness'], growth: ['Allow feelings', 'Experience closeness as freedom', 'Stay grounded'] },
+  { name: 'Pisces', range: 'Feb 20 – Mar 20', ruler: 'Neptune / Jupiter', keywords: ['Compassion', 'Intuition', 'Devotion'], traits: 'Pisces is regarded as the sign of empathy, creativity and spirituality. It senses the invisible and feels with all living things.', strengths: ['Compassion', 'Imagination and creativity', 'Intuition', 'Helpfulness'], challenges: ['Setting boundaries', 'Escaping into daydreams', 'Self-sacrifice'], growth: ['Boundaries as self-protection', 'Turn dreams into steps', 'Strengthen your own voice'] },
+];
+
+const ELEMENTS_EN: Record<Element, string> = { Feuer: 'Fire', Erde: 'Earth', Luft: 'Air', Wasser: 'Water' };
+const MODALITY_EN: Record<SignInfo['modality'], string> = { Kardinal: 'Cardinal', Fix: 'Fixed', Beweglich: 'Mutable' };
+
+/** Sternzeichen in der aktuellen Sprache (Element bleibt als Schlüssel deutsch, Anzeige über elementName). */
+export function localSign(s: SignInfo): SignInfo {
+  if (lang() !== 'en') return s;
+  return { ...s, ...SIGNS_EN[s.index] };
+}
+export const elementName = (e: Element) => (lang() === 'en' ? ELEMENTS_EN[e] : e);
+export const modalityName = (m: SignInfo['modality']) => (lang() === 'en' ? MODALITY_EN[m] : m);

@@ -1,6 +1,6 @@
 import { App as CapApp } from '@capacitor/app';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { CalendarDays, HeartPulse, Home, Sparkles, Wallet } from 'lucide-react';
+import { CalendarDays, Coins, HeartPulse, Home, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { db, ensureSeed } from './core/db';
@@ -25,7 +25,8 @@ import MeditationScreen from './features/spirit/Meditation';
 import TarotScreen from './features/spirit/Tarot';
 import JournalScreen from './features/spirit/Journal';
 import SearchScreen from './features/search/Search';
-import QuickAdd from './features/dashboard/QuickAdd';
+import SpiritHub from './features/spirit/SpiritHub';
+import { setLang, t, detectLang } from './i18n';
 
 function useTheme() {
   const { theme } = useSettings();
@@ -34,7 +35,7 @@ function useTheme() {
     const apply = () => {
       const dark = theme === 'dark' || (theme === 'system' && mq.matches);
       document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#121813' : '#F4EFE4');
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0A120E' : '#EBDFBF');
     };
     apply();
     mq.addEventListener('change', apply);
@@ -43,21 +44,21 @@ function useTheme() {
 }
 
 const NAV = [
-  { to: '/', label: 'Dashboard', icon: Home, end: true },
+  { to: '/', label: 'Übersicht', icon: Home, end: true },
   { to: '/calendar', label: 'Kalender', icon: CalendarDays },
-  { to: '/finance', label: 'Finanzen', icon: Wallet },
+  { to: '/finance', label: 'Finanzen', icon: Coins },
   { to: '/health', label: 'Gesundheit', icon: HeartPulse },
   { to: '/spirit', label: 'Spiritualität', icon: Sparkles },
 ];
 
 function BottomNav() {
   return (
-    <nav className="bottom-nav" aria-label="Hauptnavigation">
+    <nav className="bottom-nav" aria-label={t('Hauptnavigation')}>
       <div className="inner">
         {NAV.map(({ to, label, icon: Icon, end }) => (
           <NavLink key={to} to={to} end={end} className={({ isActive }) => (isActive ? 'active' : '')}>
-            <Icon size={22} strokeWidth={1.8} />
-            <span>{label}</span>
+            <Icon size={22} strokeWidth={1.7} />
+            <span>{t(label)}</span>
           </NavLink>
         ))}
       </div>
@@ -117,37 +118,45 @@ export default function App() {
     window.scrollTo(0, 0);
   }, [loc.pathname]);
 
+  // Sprache vor dem Rendern setzen, damit alle t()-Aufrufe die richtige Sprache liefern
+  setLang(settings?.lang && settings.lang !== 'system' ? settings.lang : detectLang());
+
   if (!ready || !settings) return <div className="app" />;
-  if (!settings.onboarded) return <div className="app"><Onboarding /></div>;
+  if (!settings.onboarded) return <div className="app" key={settings.lang}><Onboarding /></div>;
 
   const immersive = /^\/spirit\/meditation\/.+/.test(loc.pathname);
-  const showFab = ['/', '/calendar', '/tasks', '/notes', '/finance', '/shifts'].includes(loc.pathname);
 
   return (
-    <div className="app">
+    <div className="app" key={settings.lang}>
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/areas" element={<Areas />} />
         <Route path="/calendar" element={<CalendarScreen />} />
         <Route path="/shifts" element={<ShiftsScreen />} />
         <Route path="/tasks" element={<TasksScreen />} />
+        <Route path="/tasks/:section" element={<TasksScreen />} />
         <Route path="/health" element={<HealthScreen />} />
+        <Route path="/health/:section" element={<HealthScreen />} />
         <Route path="/finance" element={<FinanceScreen />} />
+        <Route path="/finance/:section" element={<FinanceScreen />} />
         <Route path="/notes" element={<NotesScreen />} />
+        <Route path="/notes/c/:cat" element={<NotesScreen />} />
         <Route path="/notes/:id" element={<NoteEditor />} />
         <Route path="/habits" element={<HabitsScreen />} />
-        <Route path="/spirit" element={<SpiritHome />} />
+        <Route path="/spirit" element={<SpiritHub />} />
+        <Route path="/spirit/impulse" element={<SpiritHome />} />
         <Route path="/spirit/profile" element={<ProfileScreen />} />
         <Route path="/spirit/moon" element={<MoonScreen />} />
         <Route path="/spirit/meditation" element={<MeditationScreen />} />
         <Route path="/spirit/meditation/:id" element={<MeditationScreen />} />
         <Route path="/spirit/tarot" element={<TarotScreen />} />
+        <Route path="/spirit/tarot/:mode" element={<TarotScreen />} />
         <Route path="/spirit/journal" element={<JournalScreen />} />
+        <Route path="/spirit/journal/:view" element={<JournalScreen />} />
         <Route path="/search" element={<SearchScreen />} />
         <Route path="/settings" element={<SettingsScreen />} />
         <Route path="*" element={<Dashboard />} />
       </Routes>
-      {showFab && <QuickAdd />}
       {!immersive && <BottomNav />}
     </div>
   );
