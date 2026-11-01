@@ -166,20 +166,32 @@ Datumswerte als ISO-Tag `YYYY-MM-DD`, Uhrzeiten als `HH:MM` (lokale Zeit).
   `prefers-reduced-motion` wird respektiert.
 - **Nachtmodus:** System / Hell / Dunkel, umschaltbar in den Einstellungen.
 
-**Navigation** (Bottom-Bar wie im Gestaltungsentwurf): Home · Kalender · **＋** · Entdecken · Profil.
-„Entdecken“ führt als Bildkarten-Raster zu allen Bereichen (Aufgaben, Schichtplan, Gesundheit,
-Finanzen, Gewohnheiten, Notizen, Tagesimpuls, Meditation, Mond, Astrologie, Tarot, Tagebuch, Suche).
-Das zentrale „＋“ legt Aufgabe, Termin, Schicht, Ausgabe oder Notiz an. „Profil“ bündelt Name,
-Motto, Begleiter-Avatar, Einstellungen, Erinnerungen und Datensicherung.
+**Navigation** (wie im ursprünglichen Auftrag und in der Gestaltungsvorlage): Übersicht · Kalender ·
+Finanzen · Gesundheit · Spiritualität. Weitere Bereiche über „Bereiche“ (Raster-Symbol auf der
+Übersicht) mit Pergament-Kacheln: Schichtplan, Medikamente, Finanzen, Aufgaben, Notizen,
+Gewohnheiten, Spiritualität, Kalender, Suche, Einstellungen. Das „+“ auf der Übersicht legt
+Aufgabe, Termin, Schicht, Ausgabe oder Notiz an.
 
-**Zauberschul-Stil:** Pergament, Tinte, Bordeaux und altes Gold; Karten mit doppelter Goldlinie
-wie alte Buchseiten, Wachssiegel-Plus in der Navigation. Eigene, vektorbasierte Illustrationen
-(`src/ui/scenes.tsx`): gotisches Schloss am See, schwebende Kerzen, fliegende Eulen, Sternenhimmel,
-Zauberwald und Tier-Silhouetten (Eule, Katze, Hirsch, Fuchs, Huhn) in sechs Lichtstimmungen; die
-Startseite wechselt die Stimmung mit der Tageszeit. Schriften: Cinzel (Überschriften),
-Cinzel Decorative (Schriftzug), IM Fell English (Zitate) – offline gebündelt. Bewusst ohne
-geschützte Namen, Figuren oder Wappen aus bekannten Fantasy-Reihen. Das Tarot nutzt ein eigenes
-illustriertes Kartenset (`assets/tarot-original.png`, Zuschnitt per `scripts/generate-tarot.py`).
+**Bereichs-Seiten:** Jeder Bereich beginnt mit einem Kopfbild (eigene Illustration + Emblem) und
+einem Menü aus Pergament-Knöpfen, die zu Unterseiten führen oder Inhalte aufklappen
+(z. B. Gesundheit → Meine Medikamente, Einnahmeplan, Vorrat & Nachkauf, Arzttermine,
+Gesundheitsnotizen, Verlauf).
+
+**Stil:** Nachtgrün, Gold und Pergament. Dunkler Modus: Gold auf Nachtgrün; heller Modus:
+Pergament mit Waldgrün. Goldrahmen-Kacheln für den Tagesüberblick, Pergament-Knöpfe für Menüs.
+Schriften Cinzel / Cinzel Decorative / IM Fell English (offline gebündelt). Eigene SVG-Embleme
+(`src/ui/emblems.tsx`) und Szenen (`src/ui/scenes.tsx`) – bewusst ohne geschützte Namen, Figuren
+oder Wappen bekannter Fantasy-Reihen. Tarot mit eigenem Kartenset (`assets/tarot-original.png`).
+
+**Bildschirmgrößen:** Fließende Größen (`clamp()`), Raster passen sich an. Ab 600 px breitere
+Inhalte, ab 900 px (Tablet/Querformat) Seitenleiste statt unterer Navigation. Notch und
+Statusleiste werden über Capacitor-SystemBars (`--safe-area-inset-*`) bzw. `env()` berücksichtigt.
+
+**Sprachen:** Deutsch und Englisch (`src/i18n`). Deutsch ist Quellsprache, `t('…')` liefert die
+Übersetzung aus `en.ts`; Inhalte (Impulse, Tarot, Sternzeichen, Mond, Meditationen) haben eigene
+englische Fassungen. Sprache: automatisch nach Gerät oder fest in den Einstellungen bzw. auf dem
+Startbildschirm. Datums-, Zahlen- und Währungsformate folgen der Sprache.
+
 
 ---
 

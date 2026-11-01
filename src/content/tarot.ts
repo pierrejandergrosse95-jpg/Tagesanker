@@ -1,3 +1,4 @@
+import { L } from '../i18n';
 /** Die 22 Großen Arkana – Deutungen als Impulse zur Selbstreflexion, nicht als Vorhersage. */
 export interface TarotCard {
   n: number;
@@ -36,3 +37,34 @@ export const MAJOR_ARCANA: TarotCard[] = [
 ];
 
 export const THREE_CARD_POSITIONS = ['Was war', 'Was ist', 'Was werden kann'];
+
+type CardText = Pick<TarotCard, 'name' | 'keywords' | 'upright' | 'reversed' | 'question'>;
+
+const MAJOR_ARCANA_EN: CardText[] = [
+  { name: 'The Fool', keywords: ['New beginning', 'Trust', 'Freedom'], upright: 'A step into the unknown, carried by curiosity and trust. The card invites you to dare something new, openly and light-heartedly.', reversed: 'Perhaps caution is holding you back – or you jump without looking. Check whether recklessness or fear is steering you.', question: 'Where would I like to begin anew with an open heart?' },
+  { name: 'The Magician', keywords: ['Creative power', 'Focus', 'Skill'], upright: 'You have all the tools you need. Focus your attention and use your abilities consciously.', reversed: 'Energy scatters in many directions. What would happen if you concentrated on one thing?', question: 'Which of my abilities am I still using too little?' },
+  { name: 'The High Priestess', keywords: ['Intuition', 'Silence', 'Inner knowing'], upright: 'The answer lies within you. Today, rest, dreams and gut feeling may speak louder than reason.', reversed: 'You may be ignoring your inner voice. A moment of silence could bring clarity.', question: 'What do I already know deep inside?' },
+  { name: 'The Empress', keywords: ['Abundance', 'Care', 'Creativity'], upright: 'Growth, sensuality and nourishment are in the foreground. Care for yourself and what you love.', reversed: 'Are you giving more than you receive? Self-care may take priority now.', question: 'How can I nourish myself today?' },
+  { name: 'The Emperor', keywords: ['Structure', 'Stability', 'Responsibility'], upright: 'Clear structures and decisions give you support. Lovingly take the lead in your life.', reversed: 'Too much control or too little structure? Find the healthy balance.', question: 'Which structure would do me good right now?' },
+  { name: 'The Hierophant', keywords: ['Values', 'Tradition', 'Learning'], upright: 'Values, rituals and teachers can give you orientation. What has proven itself?', reversed: 'Perhaps it is time to question rules and find your own way.', question: 'Which values truly guide me?' },
+  { name: 'The Lovers', keywords: ['Connection', 'Choice', 'Harmony'], upright: 'A decision of the heart or a deep connection. Choose what is in harmony with your values.', reversed: 'Inner conflict or imbalance in a relationship. What do you really need?', question: 'Which decision does my heart make?' },
+  { name: 'The Chariot', keywords: ['Willpower', 'Direction', 'Progress'], upright: 'With determination you move forward. Hold the reins – opposites can be steered.', reversed: 'Perhaps a clear direction is missing. Where do you actually want to go?', question: 'Where do I want to direct my strength?' },
+  { name: 'Strength', keywords: ['Gentleness', 'Courage', 'Patience'], upright: 'True strength is gentle. Meet challenges – and yourself – with patience and compassion.', reversed: 'Self-doubt is gnawing at you. Remember moments when you were strong.', question: 'Where may I be gentler with myself?' },
+  { name: 'The Hermit', keywords: ['Retreat', 'Introspection', 'Wisdom'], upright: 'A retreat inwards brings insight. Allow yourself silence and time alone.', reversed: 'Too much retreat can make you lonely – or you avoid the silence. Which is more true?', question: 'Which question would I like to consider in peace?' },
+  { name: 'Wheel of Fortune', keywords: ['Cycles', 'Change', 'Fate'], upright: 'Life moves in cycles. A turn is coming – stay flexible.', reversed: 'You may feel at the mercy of things. What is still in your hands?', question: 'Which cycle is closing in my life right now?' },
+  { name: 'Justice', keywords: ['Truth', 'Balance', 'Clarity'], upright: 'Honesty and balance are called for. Act in harmony with your truth.', reversed: 'Something feels out of balance. Where are you not quite honest – with others or yourself?', question: 'Where does my life need more balance?' },
+  { name: 'The Hanged Man', keywords: ['New perspective', 'Surrender', 'Pause'], upright: 'A pause and a new point of view bring insight. Not everything has to be solved immediately.', reversed: 'Standstill feels sluggish. What would change if you let go?', question: 'How would the situation look from a completely different perspective?' },
+  { name: 'Death', keywords: ['Ending', 'Transformation', 'New beginning'], upright: 'A symbol of transformation: something ends so that something new can arise. A natural conclusion.', reversed: 'Holding on to something that is over costs strength. What may go?', question: 'What in my life is ready to be completed?' },
+  { name: 'Temperance', keywords: ['Balance', 'Patience', 'Healing'], upright: 'The right measure and patience bring healing. Combine opposites into something new.', reversed: 'Something is out of balance. Where are you overdoing it – or holding back too much?', question: 'How do I find my centre today?' },
+  { name: 'The Devil', keywords: ['Attachments', 'Patterns', 'Shadow'], upright: 'The card shows patterns and dependencies that bind you. Recognising them is the first step to freedom.', reversed: 'You are beginning to free yourself from old patterns. Keep going.', question: 'Which pattern is holding me?' },
+  { name: 'The Tower', keywords: ['Upheaval', 'Insight', 'Liberation'], upright: 'Sudden insight or change shakes the old. What falls was perhaps not sustainable.', reversed: 'You sense that something must change and are still hesitating. What would the gentle way be?', question: 'Which certainty may I re-examine?' },
+  { name: 'The Star', keywords: ['Hope', 'Healing', 'Inspiration'], upright: 'After the storm comes calm. Hope and confidence return – you are guided.', reversed: 'Hope seems far away right now. What gave you confidence in the past?', question: 'What gives me hope?' },
+  { name: 'The Moon', keywords: ['Subconscious', 'Dreams', 'Uncertainty'], upright: 'Not everything is clear. Dreams and feelings show you paths the mind cannot yet see.', reversed: 'The fog is slowly clearing. Fears lose their power when you look at them.', question: 'Which uncertainty may I look at lovingly?' },
+  { name: 'The Sun', keywords: ['Joy', 'Vitality', 'Success'], upright: 'Joy of life, warmth and clarity. Enjoy what succeeds and let your light shine.', reversed: 'The joy is there, but perhaps behind clouds. What makes you smile?', question: 'What makes me shine today?' },
+  { name: 'Judgement', keywords: ['Awakening', 'Calling', 'Re-evaluation'], upright: 'An inner calling becomes audible. Time to take stock and choose what is essential.', reversed: 'Self-criticism can paralyse. Look at your path with kindness.', question: 'Which call within me is growing louder?' },
+  { name: 'The World', keywords: ['Completion', 'Wholeness', 'Arrival'], upright: 'A circle closes. Celebrate what you have achieved and feel yourself whole.', reversed: 'Something is still waiting for the last step. What is missing for completion?', question: 'What may I celebrate today?' },
+];
+
+/** Karte in der aktuellen Sprache. */
+export const card = (n: number): TarotCard => L(MAJOR_ARCANA[n], { ...MAJOR_ARCANA[n], ...MAJOR_ARCANA_EN[n] });
+export const threeCardPositions = () => L(THREE_CARD_POSITIONS, ['What was', 'What is', 'What can be']);

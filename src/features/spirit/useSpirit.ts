@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useMemo } from 'react';
-import { IMPULSES, type Impulse } from '../../content/impulses';
+import { IMPULSES, localImpulse, type Impulse } from '../../content/impulses';
 import { selectImpulse } from '../../core/astro/guidance';
 import { moonInfo, type MoonInfo } from '../../core/astro/moon';
 import { profileSign, type SignInfo } from '../../core/astro/zodiac';
@@ -37,7 +37,7 @@ export function useDailySpirit(day: ISODate): DailySpirit | undefined {
 
   const impulse = (log && IMPULSES.find((i) => i.id === log.impulseId)) || computed;
   if (!impulse) return undefined;
-  return { impulse, liked: !!log?.liked, moon, sign };
+  return { impulse: localImpulse(impulse), liked: !!log?.liked, moon, sign };
 }
 
 export async function toggleLike(day: ISODate): Promise<void> {

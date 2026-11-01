@@ -10,6 +10,9 @@ import { billStatus, monthSummary, parseMoney } from '../features/finance/logic'
 import { daysLeft, dosesForDay } from '../features/health/logic';
 import { streak } from '../features/habits/logic';
 import type { Med, ShiftType } from './types';
+import { setLang } from '../i18n';
+
+setLang('de');
 
 describe('Datum & Wiederholung', () => {
   it('berechnet Kalenderwochen und Wochenstart', () => {
@@ -110,6 +113,8 @@ describe('Finanzen', () => {
     expect(parseMoney('1.234,56')).toBe(123456);
     expect(parseMoney('59.99')).toBe(5999);
     expect(parseMoney('abc')).toBeNull();
+    expect(parseMoney('1,234.56')).toBe(123456);
+    expect(parseMoney('12,5')).toBe(1250);
   });
   it('bilanziert Monat inkl. Fixkosten und bezahlter Rechnungen', () => {
     const s = monthSummary('2025-04-15', [

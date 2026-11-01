@@ -27,10 +27,8 @@ export type DashboardWidget =
 export interface Settings {
   id: 'main';
   name: string;
-  /** Persönliches Motto im Profil */
-  motto: string;
-  /** Avatar-Motiv im Profil */
-  avatar: 'fox' | 'deer' | 'owl' | 'hen' | 'cat';
+  /** Sprache der Oberfläche */
+  lang: 'system' | 'de' | 'en';
   onboarded: boolean;
   theme: ThemeMode;
   weeklyHours: number;

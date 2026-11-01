@@ -1,59 +1,77 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { CalendarDays, CheckSquare, ChevronRight, CircleCheck, Coins, Euro, Flower2, Heart, Layers, Pill, Search, Settings, Sun } from 'lucide-react';
-import { Scene, type SceneVariant } from '../../ui/scenes';
-import type { ReactNode } from 'react';
+import { CalendarDays, CheckSquare, Coins, Heart, LayoutGrid, Pill, Plus, Settings, Sprout, Hourglass } from 'lucide-react';
+import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addDays, fmtDayMonth, fmtLong, fromISO, greeting, isoWeek, nowHM, relDay, WEEKDAYS_SHORT } from '../../core/dates';
+import { moonMeaning } from '../../content/moon';
+import { addDays, fmtLong, fromISO, greeting, isoWeek, nowHM, relDay, weekdaysShort } from '../../core/dates';
 import { db } from '../../core/db';
 import { useSettings, useToday } from '../../core/hooks';
 import { occurrencesBetween } from '../../core/recurrence';
-import type { DashboardWidget } from '../../core/types';
-import { MoonGlyph, ProgressBar } from '../../ui/components';
+import { t, quote } from '../../i18n';
+import { MoonGlyph } from '../../ui/components';
+import { Emblem } from '../../ui/emblems';
+import { Scene } from '../../ui/scenes';
 import { itemColor, useAgenda } from '../calendar/agenda';
 import { fmtMoney } from '../finance/logic';
-import { overallProgress } from '../habits/logic';
+import { payBill } from '../finance/Finance';
+import { HabitRow } from '../habits/Habits';
+import { isDone, valueOn } from '../habits/logic';
 import { DoseRow, useTodayDoses } from '../health/Health';
 import { contrastText, resolveShift } from '../shifts/logic';
-import { HabitRow } from '../habits/Habits';
-import { TaskRow } from '../tasks/Tasks';
 import { toggleLike, useDailySpirit } from '../spirit/useSpirit';
-import { MOON_MEANINGS } from '../../content/moon';
-import { payBill } from '../finance/Finance';
+import { TaskRow } from '../tasks/Tasks';
+import QuickAdd from './QuickAdd';
+import { moonName } from '../spirit/moonText';
 
 function Section({ title, to, children }: { title: string; to?: string; children: ReactNode }) {
   const nav = useNavigate();
   return (
     <section>
-      <div className="section-title"><h2>{title}</h2>{to && <button onClick={() => nav(to)}>Alle</button>}</div>
+      <div className="section-title"><h2>{title}</h2>{to && <button onClick={() => nav(to)}>{t('Alle')}</button>}</div>
       {children}
     </section>
   );
 }
 
-function ShiftCard({ day }: { day: string }) {
+function Hero({ onPlus }: { onPlus: () => void }) {
   const nav = useNavigate();
-  const data = useLiveQuery(async () => {
-    const [s, types, tomorrow] = await Promise.all([db.shifts.where('date').equals(day).first(), db.shiftTypes.toArray(), db.shifts.where('date').equals(addDays(day, 1)).first()]);
-    return { today: s ? resolveShift(s, types) : null, tomorrow: tomorrow ? resolveShift(tomorrow, types) : null };
-  }, [day]);
-  const r = data?.today;
+  const day = useToday();
+  const settings = useSettings();
   return (
-    <button className="card tap row" onClick={() => nav('/shifts')}>
-      <div className="grow">
-        <div className="card-label">Heute</div>
-        {r ? (
-          <div className="row" style={{ gap: 8, marginTop: 2 }}>
-            <span className="swatch" style={{ background: r.type.color, width: 12, height: 12 }} />
-            <div>
-              <div className="bold">{r.type.name}</div>
-              {r.type.kind === 'work' && <div className="small muted">{r.start} – {r.end} Uhr</div>}
-            </div>
-          </div>
-        ) : <div className="bold" style={{ marginTop: 2 }}>Keine Schicht eingetragen</div>}
-        {data?.tomorrow && <div className="tiny faint" style={{ marginTop: 4 }}>Morgen: {data.tomorrow.type.name}{data.tomorrow.type.kind === 'work' ? ` · ${data.tomorrow.start}` : ''}</div>}
+    <section className="hero" style={{ height: 'calc(clamp(250px, 62vw, 330px) + var(--safe-top))' }}>
+      <Scene variant="lanterns" lanterns={14} castle seed={7} />
+      <div className="hero-content" style={{ alignItems: 'center' }}>
+        <button className="icon-btn" aria-label={t('Bereiche')} onClick={() => nav('/areas')}><LayoutGrid size={22} /></button>
+        <div className="grow center" style={{ fontFamily: 'var(--script)', fontSize: 22, color: '#f0d48e', textShadow: '0 2px 8px rgb(0 0 0 / .6)' }}>{t('Tagesanker')}</div>
+        <button className="icon-btn" aria-label={t('Hinzufügen')} onClick={onPlus}><Plus size={22} /></button>
+        <button className="icon-btn" aria-label={t('Einstellungen')} onClick={() => nav('/settings')}><Settings size={21} /></button>
       </div>
-      <ChevronRight size={18} className="faint" />
-    </button>
+      <Emblem name="owl" style={{ position: 'absolute', left: '3%', top: 'calc(var(--safe-top) + 58px)', width: 'clamp(70px, 20vw, 110px)', height: 'clamp(70px, 20vw, 110px)', zIndex: 1, filter: 'drop-shadow(0 6px 10px rgb(0 0 0 / .5))' }} />
+      <Emblem name="candle" style={{ position: 'absolute', right: '4%', top: 'calc(var(--safe-top) + 70px)', width: 'clamp(46px, 12vw, 70px)', height: 'clamp(46px, 12vw, 70px)', zIndex: 1 }} />
+      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 44, zIndex: 1, textAlign: 'center', color: '#f6e7bf', textShadow: '0 2px 10px rgb(0 0 0 / .8)' }}>
+        <h1 style={{ color: '#f6e7bf', fontSize: 'clamp(21px, 6vw, 30px)' }}>{greeting()}{settings.name ? `, ${settings.name}` : ''} <span style={{ color: '#f0d48e' }}>✦</span></h1>
+        <div className="serif" style={{ fontSize: 17 }}>{fmtLong(day)}</div>
+        <div className="small" style={{ opacity: 0.85 }}>{t('KW')} {isoWeek(day)}</div>
+      </div>
+    </section>
+  );
+}
+
+function ImpulseScroll({ day }: { day: string }) {
+  const spirit = useDailySpirit(day);
+  const nav = useNavigate();
+  if (!spirit) return <div className="parchment-card" style={{ minHeight: 110 }} />;
+  return (
+    <div className="parchment-card row" role="button" tabIndex={0} onClick={() => nav('/spirit/impulse')} style={{ marginTop: -40, position: 'relative', zIndex: 2, alignItems: 'center' }}>
+      <Emblem name="candle" size={54} />
+      <div className="grow center">
+        <div style={{ fontFamily: 'var(--display)', fontSize: 15, letterSpacing: '0.06em' }}>{t('Tagesimpuls')}</div>
+        <p className="serif" style={{ fontSize: 18, lineHeight: 1.35, fontStyle: 'italic', marginTop: 4 }}>{quote(spirit.impulse.text)}</p>
+      </div>
+      <button className="icon-btn" style={{ width: 34, height: 34, color: '#8a2c38' }} aria-label={t('Merken')} onClick={(e) => { e.stopPropagation(); void toggleLike(day); }}>
+        <Heart size={20} fill={spirit.liked ? '#8a2c38' : 'none'} />
+      </button>
+    </div>
   );
 }
 
@@ -61,33 +79,83 @@ function OverviewTiles({ day }: { day: string }) {
   const nav = useNavigate();
   const doses = useTodayDoses(day) ?? [];
   const info = useLiveQuery(async () => {
-    const [tasks, bills, events] = await Promise.all([
-      db.tasks.filter((t) => !t.done && (!t.due || t.due <= day)).toArray(),
+    const [shift, types, tasks, bills, events, habits, logs] = await Promise.all([
+      db.shifts.where('date').equals(day).first(),
+      db.shiftTypes.toArray(),
+      db.tasks.filter((x) => !x.done && (!x.due || x.due <= day)).toArray(),
       db.bills.filter((b) => !b.paidAt && b.due <= addDays(day, 7)).toArray(),
       db.events.toArray(),
+      db.habits.filter((h) => !h.archived).toArray(),
+      db.habitLogs.where('date').equals(day).toArray(),
     ]);
-    const upcoming = events
-      .flatMap((e) => occurrencesBetween(e.date, e.kind === 'birthday' ? { freq: 'yearly' } : e.recurrence, day, addDays(day, 30)).slice(0, 1).map((d) => ({ e, d })))
-      .filter(({ e, d }) => d > day || !e.time || e.time >= nowHM())
-      .sort((a, b) => a.d.localeCompare(b.d) || (a.e.time ?? '').localeCompare(b.e.time ?? ''));
-    return { tasks, bills: bills.sort((a, b) => a.due.localeCompare(b.due)), todayEvents: upcoming.filter((u) => u.d === day).length, next: upcoming[0] };
+    const todayEvents = events.filter((e) => occurrencesBetween(e.date, e.kind === 'birthday' ? { freq: 'yearly' } : e.recurrence, day, day).length > 0);
+    return {
+      shift: shift ? resolveShift(shift, types) : null,
+      tasks: tasks.length,
+      bills,
+      events: todayEvents.length,
+      habitsDone: habits.filter((h) => isDone(h, valueOn(logs, h.id!, day))).length,
+      habitsTotal: habits.length,
+    };
   }, [day]);
-  const open = doses.filter((d) => !d.intake);
-  const nextDose = open[0];
-  const Tile = ({ icon, title, value, sub, to }: { icon: ReactNode; title: string; value: string; sub?: string; to: string }) => (
-    <button className="card tap tile" onClick={() => nav(to)}>
-      <span className="icon-wrap">{icon}</span>
-      <div className="bold">{title}</div>
-      <div className="small">{value}</div>
-      {sub && <div className="tiny faint ellipsis">{sub}</div>}
+  const next = doses.find((d) => !d.intake && d.time >= nowHM()) ?? doses.find((d) => !d.intake);
+  const billSum = info?.bills.reduce((s, b) => s + b.amount, 0) ?? 0;
+  const tile = (icon: ReactNode, title: string, lines: ReactNode, to: string) => (
+    <button className="gold-tile" onClick={() => nav(to)}>
+      <span className="ic">{icon}</span>
+      <span className="t">{title}</span>
+      <span className="v">{lines}</span>
     </button>
   );
+  const s = info?.shift;
   return (
-    <div className="grid2">
-      <Tile icon={<Pill size={18} />} title="Medikamente" to="/health" value={open.length ? `${open.length} offene Einnahme${open.length > 1 ? 'n' : ''}` : doses.length ? 'Alles genommen ✓' : 'Heute keine'} sub={nextDose ? `Nächste: ${nextDose.med.name} · ${nextDose.time}` : undefined} />
-      <Tile icon={<Euro size={18} />} title="Zahlungen" to="/finance?tab=bills" value={info?.bills.length ? `${info.bills.length} fällig` : 'Nichts fällig'} sub={info?.bills[0] ? `${info.bills[0].title} · ${relDay(info.bills[0].due, day)}` : undefined} />
-      <Tile icon={<CheckSquare size={18} />} title="Aufgaben" to="/tasks" value={`${info?.tasks.length ?? 0} offen`} sub={info?.tasks[0]?.title} />
-      <Tile icon={<CalendarDays size={18} />} title="Termine" to="/calendar" value={info?.todayEvents ? `Heute ${info.todayEvents} Termin${info.todayEvents > 1 ? 'e' : ''}` : 'Heute keine'} sub={info?.next ? `${info.next.e.title} · ${relDay(info.next.d, day)}${info.next.e.time ? ', ' + info.next.e.time : ''}` : undefined} />
+    <div className="tiles3">
+      {tile(<Hourglass size={22} />, t('Schicht'), s ? <>{t(s.type.name)}{s.type.kind === 'work' && <><br />{s.start} – {s.end}</>}</> : t('Frei'), '/shifts')}
+      {tile(<Pill size={22} />, t('Medikament'), next ? <>{next.time} {t('Uhr')}<br />{next.med.name}</> : doses.length ? t('Alles genommen') : t('Keine'), '/health/today')}
+      {tile(<Coins size={22} />, t('Zahlungen'), info?.bills.length ? <>{t('{n} offen', { n: info.bills.length })}<br />({fmtMoney(billSum)})</> : t('Nichts fällig'), '/finance/bills')}
+      {tile(<CheckSquare size={22} />, t('Aufgaben'), t('{n} offen', { n: info?.tasks ?? 0 }), '/tasks/day')}
+      {tile(<CalendarDays size={22} />, t('Termine'), info?.events ? t('{n} heute', { n: info.events }) : t('Keine heute'), '/calendar')}
+      {tile(<Sprout size={22} />, t('Gewohnheiten'), `${info?.habitsDone ?? 0} / ${info?.habitsTotal ?? 0}`, '/habits')}
+    </div>
+  );
+}
+
+function MoonPill({ day }: { day: string }) {
+  const spirit = useDailySpirit(day);
+  const nav = useNavigate();
+  if (!spirit) return null;
+  const m = spirit.moon;
+  return (
+    <button className="gold-pill" style={{ width: '100%' }} onClick={() => nav('/spirit/moon')}>
+      <MoonGlyph illumination={m.illumination} waxing={m.waxing} size={36} />
+      <div style={{ textAlign: 'left' }}>
+        <div style={{ fontFamily: 'var(--display)', fontSize: 14 }}>{t('Mondphase')}</div>
+        <div className="small" style={{ opacity: 0.85 }}>{moonName(m)} · {Math.round(m.illumination * 100)} % · {moonMeaning(m.key).energy.split(' · ')[0]}</div>
+      </div>
+    </button>
+  );
+}
+
+function NextDays({ day }: { day: string }) {
+  const nav = useNavigate();
+  const from = addDays(day, 1);
+  const agenda = useAgenda(from, addDays(day, 4));
+  const days = Array.from({ length: 4 }, (_, i) => addDays(from, i));
+  return (
+    <div className="tiles3" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
+      {days.map((d) => {
+        const items = agenda?.get(d) ?? [];
+        const shift = items.find((i) => i.kind === 'shift');
+        const rest = items.filter((i) => i.kind !== 'shift' && i.kind !== 'moon');
+        return (
+          <button key={d} className="gold-tile" style={{ minHeight: 92, padding: '8px 4px' }} onClick={() => nav('/calendar')}>
+            <span className="t">{weekdaysShort()[fromISO(d).getDay()]}</span>
+            <span className="v">{String(fromISO(d).getDate()).padStart(2, '0')}.{String(fromISO(d).getMonth() + 1).padStart(2, '0')}.</span>
+            {shift && shift.kind === 'shift' ? <span className="shift-pill" style={{ background: shift.type.color, color: contrastText(shift.type.color), fontSize: 11, padding: '1px 6px' }}>{t(shift.type.short)}</span> : <span style={{ height: 14 }} />}
+            <span className="cal-dots">{rest.slice(0, 3).map((it, i) => <i key={i} style={{ background: itemColor(it) }} />)}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -95,16 +163,16 @@ function OverviewTiles({ day }: { day: string }) {
 function MedsWidget({ day }: { day: string }) {
   const doses = useTodayDoses(day) ?? [];
   if (!doses.length) return null;
-  return <Section title="Einnahmen heute" to="/health"><div className="list">{doses.slice(0, 4).map((d) => <DoseRow key={`${d.med.id}-${d.time}`} d={d} />)}</div></Section>;
+  return <Section title={t('Einnahmen heute')} to="/health/today"><div className="list">{doses.slice(0, 4).map((d) => <DoseRow key={`${d.med.id}-${d.time}`} d={d} />)}</div></Section>;
 }
 
 function TasksWidget({ day }: { day: string }) {
   const nav = useNavigate();
-  const tasks = useLiveQuery(() => db.tasks.filter((t) => !t.done && (!t.due || t.due <= day)).toArray(), [day]) ?? [];
+  const tasks = useLiveQuery(() => db.tasks.filter((x) => !x.done && (!x.due || x.due <= day)).toArray(), [day]) ?? [];
   const sorted = tasks.sort((a, b) => a.priority - b.priority || (a.due ?? '').localeCompare(b.due ?? '')).slice(0, 5);
   return (
-    <Section title="Offene Aufgaben" to="/tasks">
-      {sorted.length ? <div className="list">{sorted.map((t) => <TaskRow key={t.id} t={t} onEdit={() => nav('/tasks')} />)}</div> : <div className="card small muted">Keine offenen Aufgaben für heute 🌿</div>}
+    <Section title={t('Offene Aufgaben')} to="/tasks/day">
+      {sorted.length ? <div className="list">{sorted.map((x) => <TaskRow key={x.id} t={x} onEdit={() => nav('/tasks/day')} />)}</div> : <div className="card small muted">{t('Keine offenen Aufgaben für heute 🌿')}</div>}
     </Section>
   );
 }
@@ -113,12 +181,12 @@ function BillsWidget({ day }: { day: string }) {
   const bills = useLiveQuery(() => db.bills.filter((b) => !b.paidAt && b.due <= addDays(day, 14)).toArray(), [day]) ?? [];
   if (!bills.length) return null;
   return (
-    <Section title="Anstehende Zahlungen" to="/finance?tab=bills">
+    <Section title={t('Anstehende Zahlungen')} to="/finance/bills">
       <div className="list">
         {bills.sort((a, b) => a.due.localeCompare(b.due)).slice(0, 4).map((b) => (
           <div key={b.id} className="list-item">
-            <button className="check" aria-label="Als bezahlt markieren" onClick={() => void payBill(b, day)} />
-            <div className="grow"><div className="title">{b.title}</div><div className="meta" style={{ color: b.due < day ? 'var(--danger)' : undefined }}>Fällig {relDay(b.due, day).toLowerCase()}</div></div>
+            <button className="check" aria-label={t('Als bezahlt markieren')} onClick={() => void payBill(b, day)} />
+            <div className="grow"><div className="title">{b.title}</div><div className="meta" style={{ color: b.due < day ? 'var(--danger)' : undefined }}>{t('Fällig')} {relDay(b.due, day).toLowerCase()}</div></div>
             <div className="bold">{fmtMoney(b.amount)}</div>
           </div>
         ))}
@@ -133,12 +201,12 @@ function EventsWidget({ day }: { day: string }) {
   const items = [...(agenda?.entries() ?? [])].flatMap(([d, its]) => its.filter((i) => i.kind === 'event').map((i) => ({ d, i }))).sort((a, b) => a.d.localeCompare(b.d)).slice(0, 4);
   if (!items.length) return null;
   return (
-    <Section title="Nächste Termine" to="/calendar">
+    <Section title={t('Nächste Termine')} to="/tasks/events">
       <div className="list">
         {items.map(({ d, i }, k) => i.kind === 'event' && (
           <button key={k} className="list-item" onClick={() => nav('/calendar')}>
             <span className="bar-accent" style={{ background: itemColor(i) }} />
-            <div className="grow"><div className="title">{i.event.title}</div><div className="meta">{relDay(d, day)}{i.event.time ? ` · ${i.event.time} Uhr` : ''}</div></div>
+            <div className="grow"><div className="title">{i.event.title}</div><div className="meta">{relDay(d, day)}{i.event.time ? ` · ${i.event.time} ${t('Uhr')}` : ''}</div></div>
           </button>
         ))}
       </div>
@@ -150,172 +218,44 @@ function HabitsWidget({ day }: { day: string }) {
   const habits = useLiveQuery(() => db.habits.orderBy('order').filter((h) => !h.archived).toArray(), []) ?? [];
   const logs = useLiveQuery(() => db.habitLogs.where('date').equals(day).toArray(), [day]) ?? [];
   if (!habits.length) return null;
-  const p = overallProgress(habits, logs, day);
   return (
-    <Section title="Gewohnheiten" to="/habits">
-      <div className="card mb" style={{ padding: '10px 14px' }}>
-        <div className="row between small"><span className="muted">Tagesfortschritt</span><b>{Math.round(p * 100)} %</b></div>
-        <div style={{ marginTop: 6 }}><ProgressBar value={p} /></div>
-      </div>
+    <Section title={t('Gewohnheiten')} to="/habits">
       <div className="list">{habits.slice(0, 3).map((h) => <HabitRow key={h.id} h={h} logs={logs} day={day} />)}</div>
     </Section>
   );
 }
 
-function MoonWidget({ day }: { day: string }) {
-  const nav = useNavigate();
-  const spirit = useDailySpirit(day);
-  if (!spirit) return null;
-  const m = spirit.moon;
-  return (
-    <button className="card tap row" style={{ background: 'linear-gradient(135deg, var(--card-2), var(--gold-soft))' }} onClick={() => nav('/spirit/moon')}>
-      <MoonGlyph illumination={m.illumination} waxing={m.waxing} size={64} />
-      <div className="grow">
-        <div className="bold">{m.name}</div>
-        <div className="small muted">{Math.round(m.illumination * 100)} %</div>
-        <div className="small" style={{ marginTop: 2 }}>{MOON_MEANINGS[m.key].energy}</div>
-      </div>
-      <ChevronRight size={18} className="faint" />
-    </button>
-  );
-}
-
-function ImpulseWidget({ day }: { day: string }) {
-  const nav = useNavigate();
-  const spirit = useDailySpirit(day);
-  if (!spirit) return null;
-  return (
-    <div className="card cosmic" role="button" tabIndex={0} onClick={() => nav('/spirit')}>
-      <div className="row between">
-        <span className="small muted">Impuls des Tages{spirit.sign ? ` · ${spirit.sign.symbol} ${spirit.sign.name}` : ''}</span>
-        <button className="icon-btn" style={{ width: 32, height: 32 }} aria-label="Merken" onClick={(e) => { e.stopPropagation(); void toggleLike(day); }}><Heart size={18} color="#c9a55c" fill={spirit.liked ? '#c9a55c' : 'none'} /></button>
-      </div>
-      <p className="serif" style={{ fontSize: 17, lineHeight: 1.45, marginTop: 4 }}>„{spirit.impulse.text}“</p>
-    </div>
-  );
-}
-
-function PreviewWidget({ day }: { day: string }) {
-  const nav = useNavigate();
-  const from = addDays(day, 1);
-  const to = addDays(day, 5);
-  const agenda = useAgenda(from, to);
-  const days = Array.from({ length: 5 }, (_, i) => addDays(from, i));
-  return (
-    <Section title="Die nächsten Tage" to="/calendar">
-      <div className="list">
-        {days.map((d) => {
-          const items = agenda?.get(d) ?? [];
-          const shift = items.find((i) => i.kind === 'shift');
-          const rest = items.filter((i) => i.kind !== 'shift' && i.kind !== 'moon');
-          const moon = items.find((i) => i.kind === 'moon');
-          const first = rest[0];
-          const label = first ? (first.kind === 'event' ? first.event.title : first.kind === 'task' ? first.task.title : first.kind === 'bill' ? `${first.bill.title} (${fmtMoney(first.bill.amount)})` : '') : '';
-          return (
-            <button key={d} className="list-item" onClick={() => nav('/calendar')}>
-              <div style={{ width: 38 }} className="center">
-                <div className="tiny muted">{WEEKDAYS_SHORT[fromISO(d).getDay()]}</div>
-                <div className="bold">{fromISO(d).getDate()}.</div>
-              </div>
-              {shift && shift.kind === 'shift' ? <span className="shift-pill" style={{ background: shift.type.color, color: contrastText(shift.type.color), fontSize: 11, padding: '2px 6px' }}>{shift.type.short}</span> : <span style={{ width: 22 }} />}
-              <div className="grow small ellipsis">{label || <span className="faint">{moon && moon.kind === 'moon' ? moon.label : 'Frei von Terminen'}</span>}{rest.length > 1 && <span className="faint"> +{rest.length - 1}</span>}</div>
-              <span className="cal-dots">{rest.slice(0, 3).map((it, i) => <i key={i} style={{ background: itemColor(it) }} />)}</span>
-            </button>
-          );
-        })}
-      </div>
-    </Section>
-  );
-}
-
-const WIDGETS: Record<DashboardWidget, (p: { day: string }) => ReactNode> = {
-  shift: ShiftCard, today: OverviewTiles, meds: MedsWidget, tasks: TasksWidget, bills: BillsWidget, events: EventsWidget,
-  habits: HabitsWidget, moon: MoonWidget, impulse: ImpulseWidget, preview: PreviewWidget,
+const EXTRA: Partial<Record<string, (p: { day: string }) => ReactNode>> = {
+  meds: MedsWidget, tasks: TasksWidget, bills: BillsWidget, events: EventsWidget, habits: HabitsWidget,
 };
-
-function TodayCard({ day }: { day: string }) {
-  const nav = useNavigate();
-  const data = useLiveQuery(async () => {
-    const tasks = await db.tasks.filter((t) => (t.due ? t.due === day : false) || (!t.done && (!t.due || t.due < day))).toArray();
-    return { total: tasks.length, done: tasks.filter((t) => t.done).length };
-  }, [day]);
-  const total = data?.total ?? 0;
-  const done = data?.done ?? 0;
-  return (
-    <button className="card tap row" onClick={() => nav('/tasks')}>
-      <span style={{ width: 52, height: 52, borderRadius: '50%', background: 'radial-gradient(circle, #ffe7a8, #e9a66b)', display: 'grid', placeItems: 'center', flex: 'none', boxShadow: '0 0 0 6px var(--gold-soft)' }}><Sun size={26} color="#8a5a1f" /></span>
-      <div className="grow">
-        <div className="serif bold" style={{ fontSize: 19 }}>Heute</div>
-        <div className="small muted">{total ? `${total - done} von ${total} Aufgaben offen` : 'Keine Aufgaben – genieße den Tag'}</div>
-        <div style={{ marginTop: 6 }}><ProgressBar value={total ? done / total : 1} /></div>
-      </div>
-    </button>
-  );
-}
-
-const FEATURES = [
-  { to: '/calendar', label: 'Kalender', icon: CalendarDays },
-  { to: '/tasks', label: 'Aufgaben', icon: CircleCheck },
-  { to: '/health', label: 'Gesundheit', icon: Heart },
-  { to: '/finance', label: 'Finanzen', icon: Coins },
-  { to: '/spirit/meditation', label: 'Meditation', icon: Flower2 },
-  { to: '/spirit/tarot', label: 'Tarot', icon: Layers },
-];
-
-function sceneForNow(): SceneVariant {
-  const h = new Date().getHours();
-  if (h < 5 || h >= 21) return 'night';
-  if (h < 10) return 'dawn';
-  if (h < 17) return 'meadow';
-  return 'sunset';
-}
-
-function QuoteCard({ day }: { day: string }) {
-  const spirit = useDailySpirit(day);
-  const nav = useNavigate();
-  if (!spirit) return <div className="quote-card" style={{ minHeight: 70 }} />;
-  return (
-    <div className="quote-card" role="button" tabIndex={0} onClick={() => nav('/spirit')}>
-      <p>„{spirit.impulse.text}“</p>
-      <button className="icon-btn" style={{ width: 34, height: 34 }} aria-label="Merken" onClick={(e) => { e.stopPropagation(); void toggleLike(day); }}><Heart size={20} color="var(--rose)" fill={spirit.liked ? 'var(--rose)' : 'none'} /></button>
-    </div>
-  );
-}
 
 export default function Dashboard() {
   const day = useToday();
   const settings = useSettings();
-  const nav = useNavigate();
+  const [plus, setPlus] = useState(false);
+  const visible = (id: string) => settings.widgets.find((w) => w.id === id)?.visible !== false;
   return (
     <div className="screen">
-      <section className="hero">
-        <Scene variant={sceneForNow()} animal={settings.avatar} foliage castle seed={5} />
-        <div className="hero-content">
-          <div className="grow">
-            <h1>{greeting()}{settings.name ? <><br />{settings.name}</> : ''} <span style={{ color: '#ffe7a8' }}>✦</span></h1>
-            <div className="small" style={{ marginTop: 4, opacity: 0.9, textShadow: '0 1px 6px rgb(0 0 0 / .4)' }}>{fmtLong(day)} · KW {isoWeek(day)}</div>
-          </div>
-          <button className="icon-btn" aria-label="Suche" onClick={() => nav('/search')}><Search size={21} /></button>
-          <button className="icon-btn" aria-label="Einstellungen" onClick={() => nav('/settings')}><Settings size={21} /></button>
+      <Hero onPlus={() => setPlus(true)} />
+      <div className="stack">
+        {visible('impulse') && <ImpulseScroll day={day} />}
+        {visible('today') && <>
+          <div className="ornament mt">{t('Mein Tagesüberblick')}</div>
+          <OverviewTiles day={day} />
+        </>}
+        {visible('moon') && <MoonPill day={day} />}
+        {visible('preview') && <>
+          <div className="ornament mt">{t('Die nächsten Tage')}</div>
+          <NextDays day={day} />
+        </>}
+        <div className="dash-cols">
+          {settings.widgets.filter((w) => w.visible && EXTRA[w.id]).map((w) => {
+            const W = EXTRA[w.id]!;
+            return <div key={w.id}><W day={day} /></div>;
+          })}
         </div>
-      </section>
-      <QuoteCard day={day} />
-      <div className="stack mt">
-        <TodayCard day={day} />
-        <div className="grid2">
-          {FEATURES.map(({ to, label, icon: Icon }) => (
-            <button key={to} className="card tap feature-tile" onClick={() => nav(to)}>
-              <Icon size={22} strokeWidth={1.6} />
-              <span className="bold">{label}</span>
-            </button>
-          ))}
-        </div>
-        {settings.widgets.filter((w) => w.visible && w.id !== 'impulse').map((w) => {
-          const W = WIDGETS[w.id];
-          return <W key={w.id} day={day} />;
-        })}
       </div>
-      <p className="tiny faint center" style={{ marginTop: 24 }}>Dashboard anpassen unter Profil → Design & Dashboard · {fmtDayMonth(day)}</p>
+      <QuickAdd open={plus} setOpen={setPlus} />
     </div>
   );
 }

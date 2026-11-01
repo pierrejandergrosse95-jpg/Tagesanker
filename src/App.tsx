@@ -1,6 +1,6 @@
 import { App as CapApp } from '@capacitor/app';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { CalendarDays, Heart, Home, Plus, UserRound } from 'lucide-react';
+import { CalendarDays, Coins, HeartPulse, Home, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { db, ensureSeed } from './core/db';
@@ -25,9 +25,8 @@ import MeditationScreen from './features/spirit/Meditation';
 import TarotScreen from './features/spirit/Tarot';
 import JournalScreen from './features/spirit/Journal';
 import SearchScreen from './features/search/Search';
-import QuickAdd from './features/dashboard/QuickAdd';
-import Discover from './features/dashboard/Discover';
-import ProfileHome from './features/settings/ProfileHome';
+import SpiritHub from './features/spirit/SpiritHub';
+import { setLang, t, detectLang } from './i18n';
 
 function useTheme() {
   const { theme } = useSettings();
@@ -36,7 +35,7 @@ function useTheme() {
     const apply = () => {
       const dark = theme === 'dark' || (theme === 'system' && mq.matches);
       document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#110E18' : '#ECE0C2');
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0A120E' : '#EBDFBF');
     };
     apply();
     mq.addEventListener('change', apply);
@@ -44,28 +43,24 @@ function useTheme() {
   }, [theme]);
 }
 
-const NAV_LEFT = [
-  { to: '/', label: 'Home', icon: Home, end: true },
+const NAV = [
+  { to: '/', label: 'Übersicht', icon: Home, end: true },
   { to: '/calendar', label: 'Kalender', icon: CalendarDays },
-];
-const NAV_RIGHT = [
-  { to: '/discover', label: 'Entdecken', icon: Heart },
-  { to: '/profile', label: 'Profil', icon: UserRound },
+  { to: '/finance', label: 'Finanzen', icon: Coins },
+  { to: '/health', label: 'Gesundheit', icon: HeartPulse },
+  { to: '/spirit', label: 'Spiritualität', icon: Sparkles },
 ];
 
-function BottomNav({ onPlus }: { onPlus: () => void }) {
-  const item = ({ to, label, icon: Icon, end }: (typeof NAV_LEFT)[number] & { end?: boolean }) => (
-    <NavLink key={to} to={to} end={end} className={({ isActive }) => (isActive ? 'active' : '')}>
-      <Icon size={22} strokeWidth={1.8} />
-      <span>{label}</span>
-    </NavLink>
-  );
+function BottomNav() {
   return (
-    <nav className="bottom-nav" aria-label="Hauptnavigation">
+    <nav className="bottom-nav" aria-label={t('Hauptnavigation')}>
       <div className="inner">
-        {NAV_LEFT.map(item)}
-        <div className="plus"><button aria-label="Hinzufügen" onClick={onPlus}><Plus size={28} /></button></div>
-        {NAV_RIGHT.map(item)}
+        {NAV.map(({ to, label, icon: Icon, end }) => (
+          <NavLink key={to} to={to} end={end} className={({ isActive }) => (isActive ? 'active' : '')}>
+            <Icon size={22} strokeWidth={1.7} />
+            <span>{t(label)}</span>
+          </NavLink>
+        ))}
       </div>
     </nav>
   );
@@ -73,7 +68,6 @@ function BottomNav({ onPlus }: { onPlus: () => void }) {
 
 export default function App() {
   const [ready, setReady] = useState(false);
-  const [plusOpen, setPlusOpen] = useState(false);
   const settings = useLiveQuery(() => db.settings.get('main'), [ready]);
   const nav = useNavigate();
   const loc = useLocation();
@@ -124,39 +118,46 @@ export default function App() {
     window.scrollTo(0, 0);
   }, [loc.pathname]);
 
+  // Sprache vor dem Rendern setzen, damit alle t()-Aufrufe die richtige Sprache liefern
+  setLang(settings?.lang && settings.lang !== 'system' ? settings.lang : detectLang());
+
   if (!ready || !settings) return <div className="app" />;
-  if (!settings.onboarded) return <div className="app"><Onboarding /></div>;
+  if (!settings.onboarded) return <div className="app" key={settings.lang}><Onboarding /></div>;
 
   const immersive = /^\/spirit\/meditation\/.+/.test(loc.pathname);
 
   return (
-    <div className="app">
+    <div className="app" key={settings.lang}>
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/areas" element={<Areas />} />
-        <Route path="/discover" element={<Discover />} />
-        <Route path="/profile" element={<ProfileHome />} />
         <Route path="/calendar" element={<CalendarScreen />} />
         <Route path="/shifts" element={<ShiftsScreen />} />
         <Route path="/tasks" element={<TasksScreen />} />
+        <Route path="/tasks/:section" element={<TasksScreen />} />
         <Route path="/health" element={<HealthScreen />} />
+        <Route path="/health/:section" element={<HealthScreen />} />
         <Route path="/finance" element={<FinanceScreen />} />
+        <Route path="/finance/:section" element={<FinanceScreen />} />
         <Route path="/notes" element={<NotesScreen />} />
+        <Route path="/notes/c/:cat" element={<NotesScreen />} />
         <Route path="/notes/:id" element={<NoteEditor />} />
         <Route path="/habits" element={<HabitsScreen />} />
-        <Route path="/spirit" element={<SpiritHome />} />
+        <Route path="/spirit" element={<SpiritHub />} />
+        <Route path="/spirit/impulse" element={<SpiritHome />} />
         <Route path="/spirit/profile" element={<ProfileScreen />} />
         <Route path="/spirit/moon" element={<MoonScreen />} />
         <Route path="/spirit/meditation" element={<MeditationScreen />} />
         <Route path="/spirit/meditation/:id" element={<MeditationScreen />} />
         <Route path="/spirit/tarot" element={<TarotScreen />} />
+        <Route path="/spirit/tarot/:mode" element={<TarotScreen />} />
         <Route path="/spirit/journal" element={<JournalScreen />} />
+        <Route path="/spirit/journal/:view" element={<JournalScreen />} />
         <Route path="/search" element={<SearchScreen />} />
         <Route path="/settings" element={<SettingsScreen />} />
         <Route path="*" element={<Dashboard />} />
       </Routes>
-      <QuickAdd open={plusOpen} setOpen={setPlusOpen} />
-      {!immersive && <BottomNav onPlus={() => setPlusOpen(true)} />}
+      {!immersive && <BottomNav />}
     </div>
   );
 }

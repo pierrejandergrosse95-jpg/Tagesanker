@@ -9,6 +9,8 @@ Meditation, Tagesimpulse, Tarot, Tagebuch).
 
 - **Offline & privat:** Alle Daten liegen nur auf dem Gerät (IndexedDB). Kein Konto, keine Cloud, keine Tracker.
 - **Android zuerst:** Native App über Capacitor, mit echten System-Erinnerungen. iOS und Web sind ohne Neuentwicklung möglich.
+- **Deutsch & Englisch:** Sprache automatisch nach Gerät oder wählbar.
+- **Jedes Display:** Handy (Hoch-/Querformat) und Tablet, heller und dunkler Modus.
 - **Konzept:** Architektur, Datenmodell, Design und Ausbaustufen stehen in [`docs/KONZEPT.md`](docs/KONZEPT.md).
 
 ## Funktionsumfang

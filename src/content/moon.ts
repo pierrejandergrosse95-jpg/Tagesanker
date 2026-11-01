@@ -1,3 +1,4 @@
+import { L } from '../i18n';
 import type { MoonPhaseKey } from '../core/astro/moon';
 
 export interface MoonMeaning {
@@ -42,3 +43,36 @@ export const MOON_MEANINGS: Record<MoonPhaseKey, MoonMeaning> = {
     rituals: ['Miste eine Schublade oder einen digitalen Ordner aus.', 'Ein warmes Bad mit Salz als Symbol der Reinigung.', 'Abendmeditation zum Loslassen.'],
   },
 };
+
+const MOON_MEANINGS_EN: Record<MoonPhaseKey, MoonMeaning> = {
+  new: {
+    title: 'New Moon',
+    energy: 'New beginnings · Stillness · Intention',
+    meaning: 'The new moon is seen as a time of retreat and fresh starts. The sky is dark – a blank page for wishes, resolutions and intentions that may grow during the coming cycle.',
+    questions: ['What would I like to invite into my life over the next four weeks?', 'What do I want to make more room for?', 'Which intention feels right now?'],
+    rituals: ['Write down three intentions in the present tense (“I allow myself …”).', 'Light a candle and sit in silence for five minutes.', 'Tidy a small area to symbolically make space.'],
+  },
+  waxing: {
+    title: 'Waxing Moon',
+    energy: 'Growth · Building · Action',
+    meaning: 'The waxing moon is associated with building and growth. Now is a good time to put plans into action, learn new things and nourish what you planted at the new moon.',
+    questions: ['Which concrete step moves my intention forward?', 'What or who supports me right now?', 'Where may I be braver?'],
+    rituals: ['Plan a small next step for each intention.', 'Care for a plant as a symbol of your growth.', 'Morning movement: ten minutes of stretching or walking.'],
+  },
+  full: {
+    title: 'Full Moon',
+    energy: 'Abundance · Clarity · Gratitude',
+    meaning: 'The full moon brings light into everything that was hidden. Feelings can be more intense. It is a time of harvest, gratitude and clarity about what has been fulfilled – and what no longer serves.',
+    questions: ['What has grown over the past weeks?', 'What am I grateful for today?', 'What is showing itself especially clearly to me right now?'],
+    rituals: ['Write a gratitude list with ten points.', 'A walk in the moonlight, if possible.', 'Write down what you want to let go of – and mindfully burn or tear up the note.'],
+  },
+  waning: {
+    title: 'Waning Moon',
+    energy: 'Letting go · Cleansing · Rest',
+    meaning: 'The waning moon is regarded as a time of letting go and completion. Now you may end old things, declutter, forgive and attune yourself to rest and regeneration.',
+    questions: ['What may I now end or complete?', 'Which habit costs me strength?', 'Whom or what would I like to forgive – including myself?'],
+    rituals: ['Declutter a drawer or a digital folder.', 'A warm bath with salt as a symbol of cleansing.', 'An evening meditation for letting go.'],
+  },
+};
+
+export const moonMeaning = (k: MoonPhaseKey): MoonMeaning => L(MOON_MEANINGS[k], MOON_MEANINGS_EN[k]);
